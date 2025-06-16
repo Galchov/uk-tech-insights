@@ -21,6 +21,7 @@ urlpatterns = [
         path('edit/', include([
             path('', views.profile_edit_view, name="profile-edit"),
             path('change-password/', views.change_password_view, name="change-password"),
+            path('delete/', views.profile_delete_view, name="profile-delete"),
         ])),
     ])),
 ]

@@ -51,3 +51,7 @@ def profile_edit_view(request: Request, pk: int) -> HttpResponse:
 
 def change_password_view(request: Request, pk: int) -> HttpResponse:
     return render(request, 'accounts/profile_change_password.html')
+
+
+def profile_delete_view(request: Request, pk: int) -> HttpResponse:
+    return render(request, 'accounts/profile_delete.html')

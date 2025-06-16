@@ -5,6 +5,7 @@ from django.contrib.auth import logout
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
+from django.urls import reverse_lazy
 
 
 def login_view(request: Request) -> HttpResponse:
@@ -21,20 +22,25 @@ def register_view(request: Request) -> HttpResponse:
 
 
 password_reset_view = auth_views.PasswordResetView.as_view(
-    template_name='accounts/password_reset_request.html'
+    template_name='accounts/password_reset_request.html',
+    email_template_name='accounts/password_reset_email.html',   # For testing
 )
+
 
 password_reset_done_view = auth_views.PasswordResetDoneView.as_view(
-    template_name='accounts/password_reset_done.html'
+    template_name='accounts/password_reset_done.html',
 )
+
 
 password_reset_confirm_view = auth_views.PasswordResetConfirmView.as_view(
-    template_name='accounts/password_reset_confirm.html'
+    template_name='accounts/password_reset_confirm.html',
 )
 
+
 password_reset_complete_view = auth_views.PasswordResetCompleteView.as_view(
-    template_name='accounts/password_reset_complete.html'
+    template_name='accounts/password_reset_complete.html',
 )
+
 
 # @login_required   # TODO: To be implemented
 def dashboard_view(request: Request) -> HttpResponse:

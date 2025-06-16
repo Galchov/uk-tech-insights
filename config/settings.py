@@ -136,7 +136,13 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Email settings (used for testing)
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

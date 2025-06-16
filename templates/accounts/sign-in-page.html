@@ -1,0 +1,18 @@
+{% extends 'common/base.html' %}
+
+{% block title %}Sign In | UK Tech Insights{% endblock %}
+
+{% block content %}
+<main>
+    <h2>Sign In</h2>
+    <form method="post">
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" required><br>
+
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" required><br>
+
+        <button type="submit">Sign In</button>
+    </form>
+</main>
+{% endblock %}

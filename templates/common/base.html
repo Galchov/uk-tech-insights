@@ -1,12 +1,35 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width"/>
-        <title>UK Tech Insights</title>
+        <title>{% block title %}UK Tech Insights{% endblock %}</title>
     </head>
     <body>
+        <header>
+            <nav class="navbar">
+                <a href="{% url 'home' %}">
+                    <img width="50px" src="{% static 'images/navbar_logo.png' %}" alt="logo-img">
+                </a>
+                
+                {% if not hide_navbar %}
+                <ul>
+                    <li><a href="#">News</a></li>
+                    <li><a href="#">Companies</a></li>
+                    <li><a href="#">Forum</a></li>
+                    <li><a href="{% url 'signin' %}">Sign In</a></li>
+                </ul>
+                {% endif %}
+            </nav>
+        </header>
+
         {% block content %}
         {% endblock %}
+
+        <footer>
+            <p>&copy; 2025 UK Tech Insights</p>
+        </footer>
     </body>
 </html>

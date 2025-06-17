@@ -14,14 +14,7 @@ urlpatterns = [
         path('complete/', views.password_reset_complete_view, name="password_reset_complete"),
     ])),
 
-    path('dashboard/', views.dashboard_view, name="dashboard"),
+    path('<int:pk>/change-password/', views.change_password_view, name="change_password"),
 
-    path('profile/<int:pk>/', include([
-        path('', views.profile_details_view, name="profile_details"),
-        path('edit/', include([
-            path('', views.profile_edit_view, name="profile_edit"),
-            path('change-password/', views.change_password_view, name="change_password"),
-            path('delete/', views.profile_delete_view, name="profile_delete"),
-        ])),
-    ])),
+    path('<int:pk>/delete-account/', views.delete_account_view, name="delete_account"),
 ]

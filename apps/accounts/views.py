@@ -3,9 +3,7 @@ from django.http import HttpResponse
 from urllib.request import Request
 from django.contrib.auth import logout
 from django.contrib.auth import views as auth_views
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from django.urls import reverse_lazy
 
 
 def login_view(request: Request) -> HttpResponse:
@@ -42,22 +40,9 @@ password_reset_complete_view = auth_views.PasswordResetCompleteView.as_view(
 )
 
 
-# @login_required   # TODO: To be implemented
-def dashboard_view(request: Request) -> HttpResponse:
-    return render(request, 'accounts/dashboard.html')
-
-
-def profile_details_view(request: Request, pk: int) -> HttpResponse:
-    return render(request, 'accounts/profile_details.html')
-
-
-def profile_edit_view(request: Request, pk: int) -> HttpResponse:
-    return render(request, 'accounts/profile_edit.html')
-
-
 def change_password_view(request: Request, pk: int) -> HttpResponse:
-    return render(request, 'accounts/profile_change_password.html')
+    return render(request, 'accounts/change_password.html')
 
 
-def profile_delete_view(request: Request, pk: int) -> HttpResponse:
-    return render(request, 'accounts/profile_delete.html')
+def delete_account_view(request: Request, pk: int) -> HttpResponse:
+    return render(request, 'accounts/delete_account.html')

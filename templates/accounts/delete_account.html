@@ -8,7 +8,7 @@
 
     <p><strong>Warning:</strong> This action is permanent and cannot be undone. All your data, contributions, and preferences will be deleted.</p>
 
-    <form method="post" action="{% url 'delete_account' request.user.pk %}">
+    <form method="post" action="{% url 'delete_account' 1 %}">
         {% csrf_token %}
 
         <div>
@@ -18,7 +18,6 @@
 
         <div>
             <button type="submit">Delete My Account</button>
-            <a href="{% url 'dashboard' %}">Cancel</a>
         </div>
     </form>
 </main>

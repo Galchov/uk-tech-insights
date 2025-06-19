@@ -4,7 +4,7 @@ from . import views
 
 urlpatterns = [
     path('login/', views.login_view, name="login"),
-    path('logout/', views.logout_view, name="logout"),  # TODO: Test when User model is in DB
+    path('logout/', views.logout_view, name="logout"),
     path('register/', views.register_view, name="register"),
 
     path('password-reset/', include([
@@ -14,7 +14,10 @@ urlpatterns = [
         path('complete/', views.password_reset_complete_view, name="password_reset_complete"),
     ])),
 
-    path('<int:pk>/change-password/', views.change_password_view, name="change_password"),
-
-    path('<int:pk>/delete-account/', views.delete_account_view, name="delete_account"),
+    path('profile/<int:pk>/', include([
+        path('', views.profile_details_view, name="profile_details"),
+        path('edit/', views.profile_edit_view, name="profile_edit"),
+        path('change-password/', views.change_password_view, name="change_password"),
+        path('delete-account/', views.delete_account_view, name="delete_account"),
+    ]))
 ]

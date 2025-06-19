@@ -1,22 +1,21 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-from urllib.request import Request
+from django.http import HttpRequest, HttpResponse
 from django.contrib.auth import logout
 from django.contrib.auth import views as auth_views
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 
 
-def login_view(request: Request) -> HttpResponse:
+def login_view(request: HttpRequest) -> HttpResponse:
     return render(request, 'accounts/login.html', {'hide_navbar': True})
 
 
-def logout_view(request: Request) -> HttpResponse:
+def logout_view(request: HttpRequest) -> HttpResponse:
     logout(request)
     return redirect('login')
 
 
-def register_view(request: Request) -> HttpResponse:
+def register_view(request: HttpRequest) -> HttpResponse:
     return render(request, 'accounts/register.html', {'hide_navbar': True})
 
 
@@ -41,23 +40,26 @@ password_reset_complete_view = auth_views.PasswordResetCompleteView.as_view(
 )
 
 
-def change_password_view(request: Request, pk: int) -> HttpResponse:
-    return render(request, 'accounts/change_password.html')
-
-
-def delete_account_view(request: Request, pk: int) -> HttpResponse:
-    return render(request, 'accounts/delete_account.html')
-
-
-# TODO: To be implemented
-# @login_required   
-def dashboard_view(request: Request) -> HttpResponse:
-    return render(request, 'accounts/dashboard.html')
-
-
-def profile_details_view(request: Request, pk: int) -> HttpResponse:
+# @login_required
+def profile_details_view(request: HttpRequest, pk: int) -> HttpResponse:
     return render(request, 'accounts/profile_details.html')
 
 
-def profile_edit_view(request: Request, pk: int) -> HttpResponse:
+# @login_required   
+def dashboard_view(request: HttpRequest) -> HttpResponse:
+    return render(request, 'accounts/dashboard.html')
+
+
+# @login_required
+def profile_edit_view(request: HttpRequest, pk: int) -> HttpResponse:
     return render(request, 'accounts/profile_edit.html')
+
+
+# @login_required
+def change_password_view(request: HttpRequest, pk: int) -> HttpResponse:
+    return render(request, 'accounts/change_password.html')
+
+
+# @login_required
+def delete_account_view(request: HttpRequest, pk: int) -> HttpResponse:
+    return render(request, 'accounts/delete_account.html')

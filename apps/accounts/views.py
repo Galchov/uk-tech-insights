@@ -56,8 +56,15 @@ def profile_edit_view(request: HttpRequest, pk: int) -> HttpResponse:
 
 
 # @login_required
-def change_password_view(request: HttpRequest, pk: int) -> HttpResponse:
-    return render(request, 'accounts/change_password.html')
+password_change_view = auth_views.PasswordChangeView.as_view(
+    template_name='accounts/password_change.html',
+)
+
+
+# @login_required
+password_change_done_view = auth_views.PasswordChangeDoneView.as_view(
+    template_name='accounts/password_change_done.html',
+)
 
 
 # @login_required

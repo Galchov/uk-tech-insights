@@ -5,12 +5,17 @@
 {% block content %}
 <main>
     <h2>Sign In</h2>
-    <form method="post">
-        <label for="email">Email:</label>
-        <input type="email" name="email" id="email" required><br>
+    <form method="post", action="{% url 'login' %}?next={% url 'dashboard' 1 %}">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
 
-        <label for="password">Password:</label>
-        <input type="password" name="password" id="password" required><br>
+        <label for="{{ form.email.id_for_label }}">Email:</label>
+        {{ form.username }}
+        {{ form.username.errors }}
+
+        <label for="{{ form.password.id_for_label }}">Password:</label>
+         {{ form.password }}
+         {{ form.password.errors }}
 
         <button type="submit">Sign In</button>
 

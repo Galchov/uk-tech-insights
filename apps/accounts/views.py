@@ -5,9 +5,14 @@ from django.contrib.auth import views as auth_views
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 
+from .forms import EmailAuthenticationForm
 
-def login_view(request: HttpRequest) -> HttpResponse:
-    return render(request, 'accounts/login.html', {'hide_navbar': True})
+
+login_view = auth_views.LoginView.as_view(
+    template_name='accounts/login.html',
+    authentication_form=EmailAuthenticationForm,
+    extra_context={'hide_navbar': True},
+)
 
 
 def logout_view(request: HttpRequest) -> HttpResponse:
@@ -41,12 +46,12 @@ password_reset_complete_view = auth_views.PasswordResetCompleteView.as_view(
 
 
 # @login_required
-def profile_details_view(request: HttpRequest, pk: int) -> HttpResponse:
-    return render(request, 'accounts/profile_details.html')
+# def profile_details_view(request: HttpRequest, pk: int) -> HttpResponse:
+#     return render(request, 'accounts/profile_details.html')
 
 
 # @login_required   
-def dashboard_view(request: HttpRequest) -> HttpResponse:
+def dashboard_view(request: HttpRequest, pk: int) -> HttpResponse:
     return render(request, 'accounts/dashboard.html')
 
 

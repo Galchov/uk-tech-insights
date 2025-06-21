@@ -5,12 +5,12 @@ from django.contrib.auth import views as auth_views
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 
-from .forms import EmailAuthenticationForm
+from .forms import CustomEmailAuthenticationForm
 
 
 login_view = auth_views.LoginView.as_view(
     template_name='accounts/login.html',
-    authentication_form=EmailAuthenticationForm,
+    authentication_form=CustomEmailAuthenticationForm,
     extra_context={'hide_navbar': True},
 )
 

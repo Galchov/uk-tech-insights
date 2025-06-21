@@ -16,13 +16,17 @@ class CustomUserChangeForm(UserChangeForm):
         fields = ('email', 'username', 'first_name', 'last_name')
 
 
-class EmailAuthenticationForm(AuthenticationForm):
+class CustomEmailAuthenticationForm(AuthenticationForm):
     username = forms.EmailField(
         label='Email',
-        widget=forms.EmailInput(attrs={'autofocus': True}),
+        max_length=254,
+    )
+    password = forms.CharField(
+        label='Password',
+        widget=forms.PasswordInput()
     )
 
     def confirm_login_allowed(self, user):
         if not user.is_active:
             raise forms.ValidationError("This account is inactive.", code='inactive')
-        
+    

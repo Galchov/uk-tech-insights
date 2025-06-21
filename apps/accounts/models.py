@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
+from django_countries.fields import CountryField
 
 from .managers import CustomUserManager
 
@@ -19,16 +20,14 @@ class CustomUser(AbstractUser):
     bio = models.TextField(
         _('biography'),
         blank=True,
-        null=True,
         help_text=_('Optional: Write a short bio to display on your profile.'),
     )
-    country = models.CharField(
+    country = CountryField(
         _('country of residence'),
-        max_length=50,
         blank=True,
-        null=True,
-        help_text=_('Optional: Your current country of residence.'),
-    )
+        blank_label='(Select country)',
+        help_text=_('Your current country of residence.'),
+        )
     profile_picture = models.ImageField(
         _('profile picture'),
         upload_to='profile_pictures/',

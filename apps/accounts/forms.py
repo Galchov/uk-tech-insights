@@ -4,10 +4,10 @@ from django import forms
 from .models import CustomUser
 
 
-class CustomUserCreationForm(UserCreationForm):
+class CustomRegistrationForm(UserCreationForm):
     class Meta:
         model = CustomUser
-        fields = ('email', 'username')
+        fields = ['email', 'username', 'password1', 'password2']
 
 
 class CustomUserChangeForm(UserChangeForm):

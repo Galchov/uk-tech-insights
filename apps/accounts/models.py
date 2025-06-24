@@ -8,7 +8,7 @@ from .managers import CustomUserManager
 
 class CustomUser(AbstractUser):
     email = models.EmailField(
-        _('email_address'),
+        _('email address'),
         unique=True,
         help_text=_('Enter a valid email address. This will be used to log in.'),
     )

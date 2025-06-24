@@ -6,64 +6,25 @@
 <main>
     <h1>Register for UK Tech Insights</h1>
 
-    <form method="post" action="{% url 'register' %}">
+    <form method="POST" action="{% url 'register' %}">
         {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label><br>
+                {{ field }}
+                
+                {% if field.help_text %}
+                    <small>{{ field.help_text }}</small><br>
+                {% endif %}
 
-        <div>
-            <label for="id_full_name">Full Name:</label>
-            <input type="text" name="full_name" id="id_full_name" required>
-        </div>
+                {% for error in field.errors %}
+                    <div style="color:red">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <br>
+        {% endfor %}
 
-        <div>
-            <label for="id_username">Username:</label>
-            <input type="text" name="username" id="id_username" required>
-        </div>
-
-        <div>
-            <label for="id_email">Email:</label>
-            <input type="email" name="email" id="id_email" required>
-        </div>
-
-        <div>
-            <label for="id_email_confirm">Confirm Email:</label>
-            <input type="email" name="email_confirm" id="id_email_confirm" required>
-        </div>
-
-        <div>
-            <label for="id_password1">Password:</label>
-            <input type="password" name="password1" id="id_password1" required>
-        </div>
-
-        <div>
-            <label for="id_password2">Confirm Password:</label>
-            <input type="password" name="password2" id="id_password2" required>
-        </div>
-
-        <div>
-            <label for="id_occupation">Occupation / Role:</label>
-            <input type="text" name="occupation" id="id_occupation">
-        </div>
-
-        <div>
-            <label for="id_region">Region:</label>
-            <select name="region" id="id_region">
-                <option value="">Select your region</option>
-                <option value="england">England</option>
-                <option value="scotland">Scotland</option>
-                <option value="wales">Wales</option>
-                <option value="northern_ireland">Northern Ireland</option>
-                <option value="outside_uk">Outside UK</option>
-            </select>
-        </div>
-
-        <div>
-            <input type="checkbox" name="terms" id="id_terms" required>
-            <label for="id_terms">I agree to the <a href="#">Terms and Conditions</a></label>
-        </div>
-
-        <div>
-            <button type="submit">Register</button>
-        </div>
+        <button type="submit">Register</button>
     </form>
 
     <p>Already have an account? <a href="{% url 'login' %}">Sign in here</a>.</p>

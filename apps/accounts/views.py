@@ -4,8 +4,9 @@ from django.contrib.auth import logout
 from django.contrib.auth import views as auth_views
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
-from .forms import CustomEmailAuthenticationForm
+from .forms import CustomRegistrationForm, CustomEmailAuthenticationForm
 
 
 login_view = auth_views.LoginView.as_view(
@@ -21,7 +22,22 @@ def logout_view(request: HttpRequest) -> HttpResponse:
 
 
 def register_view(request: HttpRequest) -> HttpResponse:
-    return render(request, 'accounts/register.html', {'hide_navbar': True})
+    form = CustomRegistrationForm()
+
+    if request.method == "POST":
+        form = CustomRegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            messages.success(request, f"{username}, your account has successfully been created.")
+
+            return redirect('login')
+
+    context = {
+        'form': form,
+        'hide_navbar': True,
+    }
+    return render(request, 'accounts/register.html', context)
 
 
 password_reset_view = auth_views.PasswordResetView.as_view(

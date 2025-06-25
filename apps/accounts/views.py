@@ -3,6 +3,7 @@ from django.http import HttpRequest, HttpResponse
 from django.contrib.auth import logout
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.urls import reverse_lazy, reverse
 
@@ -50,6 +51,17 @@ def register_view(request: HttpRequest) -> HttpResponse:
     return render(request, 'accounts/register.html', context)
 
 
+class CustomPasswordChangeView(LoginRequiredMixin, auth_views.PasswordChangeView):
+    template_name = 'accounts/password_change.html'
+    
+    def get_success_url(self):
+        return reverse('password_change_done', kwargs={'pk': self.request.user.pk})
+
+
+class CustomPasswordChangeDoneView(LoginRequiredMixin, auth_views.PasswordChangeDoneView):
+    template_name='accounts/password_change_done.html'
+
+
 password_reset_view = auth_views.PasswordResetView.as_view(
     template_name='accounts/password_reset_request.html',
     email_template_name='accounts/password_reset_email.html',   # For testing
@@ -71,11 +83,6 @@ password_reset_complete_view = auth_views.PasswordResetCompleteView.as_view(
 )
 
 
-# @login_required
-# def profile_details_view(request: HttpRequest, pk: int) -> HttpResponse:
-#     return render(request, 'accounts/profile_details.html')
-
-
 # @login_required   
 def dashboard_view(request: HttpRequest, pk: int) -> HttpResponse:
     return render(request, 'accounts/dashboard.html')
@@ -84,18 +91,6 @@ def dashboard_view(request: HttpRequest, pk: int) -> HttpResponse:
 # @login_required
 def profile_edit_view(request: HttpRequest, pk: int) -> HttpResponse:
     return render(request, 'accounts/profile_edit.html')
-
-
-# @login_required
-password_change_view = auth_views.PasswordChangeView.as_view(
-    template_name='accounts/password_change.html',
-)
-
-
-# @login_required
-password_change_done_view = auth_views.PasswordChangeDoneView.as_view(
-    template_name='accounts/password_change_done.html',
-)
 
 
 # @login_required

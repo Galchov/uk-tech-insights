@@ -5,5 +5,9 @@
 {% block content %}
 <main>
     <h1>Your Dashboard</h1>
+    <h3>Account Settings</h3>
+    <ul>
+        <li><a href="{% url 'password_change' user.pk %}">Change Password</a></li>
+    </ul>
 </main>
 {% endblock %}

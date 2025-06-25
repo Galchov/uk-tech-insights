@@ -18,12 +18,22 @@ class CustomUserChangeForm(UserChangeForm):
 
 class CustomEmailAuthenticationForm(AuthenticationForm):
     username = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            'autofocus': True,
+            'autocomplete': 'username',
+            'required': True,
+            'class': 'form-control',
+        }),
         label='Email',
         max_length=254,
     )
     password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'autocomplete': 'current-password',
+            'required': True,
+            'class': 'form-control',
+        }),
         label='Password',
-        widget=forms.PasswordInput()
     )
 
     def confirm_login_allowed(self, user):

@@ -1,19 +1,26 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpRequest, HttpResponse
 from django.contrib.auth import logout
 from django.contrib.auth import views as auth_views
-from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.urls import reverse_lazy, reverse
 
 from .forms import CustomRegistrationForm, CustomEmailAuthenticationForm
 
 
-login_view = auth_views.LoginView.as_view(
-    template_name='accounts/login.html',
-    authentication_form=CustomEmailAuthenticationForm,
-    extra_context={'hide_navbar': True},
-)
+class CustomLoginView(auth_views.LoginView):
+    template_name = 'accounts/login.html'
+    authentication_form = CustomEmailAuthenticationForm
+    redirect_authenticated_user = True
+    extra_context = {'hide_navbar': True}
+
+    def get_success_url(self):
+        return reverse('dashboard', kwargs={'pk': self.request.user.pk}) or self.get_redirect_url()
+    
+    def form_invalid(self, form):
+        messages.error(self.request, "Invalid Email or Passowrd. Please try again.")
+        return super().form_invalid(form)
 
 
 def logout_view(request: HttpRequest) -> HttpResponse:

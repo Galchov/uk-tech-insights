@@ -23,9 +23,12 @@ class CustomLoginView(auth_views.LoginView):
         return super().form_invalid(form)
 
 
-def logout_view(request: HttpRequest) -> HttpResponse:
-    logout(request)
-    return redirect('login')
+class CustomLogoutView(auth_views.LogoutView):
+    next_page = 'login'
+
+    def dispatch(self, request, *args, **kwargs):
+        messages.success(self.request, "You have been logged out.")
+        return super().dispatch(request, *args, **kwargs)
 
 
 def register_view(request: HttpRequest) -> HttpResponse:

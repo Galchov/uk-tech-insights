@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
 from django.http import HttpRequest, HttpResponse
-from django.contrib.auth import logout
 from django.contrib.auth import views as auth_views
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy, reverse
+from django.views.generic.edit import FormView
 
 from .forms import CustomRegistrationForm, CustomEmailAuthenticationForm
 
@@ -32,23 +32,17 @@ class CustomLogoutView(auth_views.LogoutView):
         return super().dispatch(request, *args, **kwargs)
 
 
-def register_view(request: HttpRequest) -> HttpResponse:
-    form = CustomRegistrationForm()
+class CustomRegisterView(SuccessMessageMixin, FormView):
+    template_name = 'accounts/register.html'
+    form_class = CustomRegistrationForm
+    success_url = reverse_lazy('login')
+    success_message = "%(username)s, your account has successfully been created."
+    extra_context = {'hide_navbar': True}
 
-    if request.method == "POST":
-        form = CustomRegistrationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(request, f"{username}, your account has successfully been created.")
-
-            return redirect('login')
-
-    context = {
-        'form': form,
-        'hide_navbar': True,
-    }
-    return render(request, 'accounts/register.html', context)
+    def form_valid(self, form):
+        form.save()
+        self.object = form.instance
+        return super().form_valid(form)
 
 
 class CustomPasswordChangeView(LoginRequiredMixin, auth_views.PasswordChangeView):
@@ -65,18 +59,22 @@ class CustomPasswordChangeDoneView(LoginRequiredMixin, auth_views.PasswordChange
 class CustomPasswordResetView(auth_views.PasswordResetView):
     template_name='accounts/password_reset_request.html'
     email_template_name='accounts/password_reset_email.html'
+    extra_context = {'hide_navbar': True}
 
 
 class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
     template_name='accounts/password_reset_done.html'
+    extra_context = {'hide_navbar': True}
     
 
 class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
     template_name='accounts/password_reset_confirm.html'
+    extra_context = {'hide_navbar': True}
 
 
 class CustomPasswordResetCompleteView(auth_views.PasswordResetCompleteView):
     template_name='accounts/password_reset_complete.html'
+    extra_context = {'hide_navbar': True}
 
 
 # @login_required   

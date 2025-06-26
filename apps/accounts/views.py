@@ -62,25 +62,21 @@ class CustomPasswordChangeDoneView(LoginRequiredMixin, auth_views.PasswordChange
     template_name='accounts/password_change_done.html'
 
 
-password_reset_view = auth_views.PasswordResetView.as_view(
-    template_name='accounts/password_reset_request.html',
-    email_template_name='accounts/password_reset_email.html',   # For testing
-)
+class CustomPasswordResetView(auth_views.PasswordResetView):
+    template_name='accounts/password_reset_request.html'
+    email_template_name='accounts/password_reset_email.html'
 
 
-password_reset_done_view = auth_views.PasswordResetDoneView.as_view(
-    template_name='accounts/password_reset_done.html',
-)
+class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
+    template_name='accounts/password_reset_done.html'
+    
+
+class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
+    template_name='accounts/password_reset_confirm.html'
 
 
-password_reset_confirm_view = auth_views.PasswordResetConfirmView.as_view(
-    template_name='accounts/password_reset_confirm.html',
-)
-
-
-password_reset_complete_view = auth_views.PasswordResetCompleteView.as_view(
-    template_name='accounts/password_reset_complete.html',
-)
+class CustomPasswordResetCompleteView(auth_views.PasswordResetCompleteView):
+    template_name='accounts/password_reset_complete.html'
 
 
 # @login_required   

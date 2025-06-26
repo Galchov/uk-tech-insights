@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy, reverse
 from django.views.generic.edit import FormView
+from django.views.generic import TemplateView
 
 from .forms import CustomRegistrationForm, CustomEmailAuthenticationForm
 
@@ -77,9 +78,26 @@ class CustomPasswordResetCompleteView(auth_views.PasswordResetCompleteView):
     extra_context = {'hide_navbar': True}
 
 
-# @login_required   
-def dashboard_view(request: HttpRequest, pk: int) -> HttpResponse:
-    return render(request, 'accounts/dashboard.html')
+class CustomDashboardView(LoginRequiredMixin, TemplateView):
+    template_name = 'accounts/dashboard.html'
+    login_url = 'login'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        context.update({
+            'profile': user.profile,
+            'show_navbar': True,
+
+            # TODO: Uncomment when models are in place
+            # "post_count": getattr(user, 'posts', []).count(),
+            # "tutorial_count": getattr(user, 'tutorials', []).count(),
+            # "followers_count": getattr(user, 'followers', []).count(),
+            # "following_count": getattr(user, 'following', []).count(),
+        })
+
+        return context
 
 
 # @login_required

@@ -3,30 +3,28 @@
 {% block title %}Register | UK Tech Insights{% endblock %}
 
 {% block content %}
-<main>
-    <h1>Register for UK Tech Insights</h1>
+<h1>Register for UK Tech Insights</h1>
 
-    <form method="POST" action="{% url 'register' %}">
-        {% csrf_token %}
-        {% for field in form %}
-            <div class="form-group">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label><br>
-                {{ field }}
-                
-                {% if field.help_text %}
-                    <small>{{ field.help_text }}</small><br>
-                {% endif %}
+<form method="POST" action="{% url 'register' %}">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label><br>
+            {{ field }}
+            
+            {% if field.help_text %}
+                <small>{{ field.help_text }}</small><br>
+            {% endif %}
 
-                {% for error in field.errors %}
-                    <div style="color:red">{{ error }}</div>
-                {% endfor %}
-            </div>
-            <br>
-        {% endfor %}
+            {% for error in field.errors %}
+                <div style="color:red">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <br>
+    {% endfor %}
 
-        <button type="submit">Register</button>
-    </form>
+    <button type="submit">Register</button>
+</form>
 
-    <p>Already have an account? <a href="{% url 'login' %}">Sign in here</a>.</p>
-</main>
+<p>Already have an account? <a href="{% url 'login' %}">Sign in here</a>.</p>
 {% endblock %}

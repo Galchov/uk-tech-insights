@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     # Custom apps
     'apps.common',
     'apps.accounts',
+    'apps.learning',
 
     # Additional apps
     'django_countries',
@@ -80,24 +81,17 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": config('DB_ENGINE'),
+        "NAME": config('DB_NAME'),
+        "USER": config('DB_USER'),
+        "PASSWORD": config('DB_PASSWORD'),
+        "HOST": config('DB_HOST'),
+        "PORT": config('DB_PORT'),
     }
 }
-
-# TODO: Use later
-# DATABASES = {
-#     "default": {
-#         "ENGINE": config('DB_ENGINE'),
-#         "NAME": config('DB_NAME'),
-#         "USER": config('DB_USER'),
-#         "PASSWORD": config('DB_PASSWORD'),
-#         "HOST": config('DB_HOST'),
-#         "PORT": config('DB_PORT'),
-#     }
-# }
 
 
 # Password validation

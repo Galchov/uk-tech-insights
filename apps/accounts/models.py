@@ -39,10 +39,27 @@ class Profile(models.Model):
         related_name='profile',
         verbose_name=_('user')
     )
+    headline = models.CharField(
+        _('headline'),
+        blank=True,
+        help_text=_("Optional: A short tagline or headline summarizing your professional identity."),
+    )
     bio = models.TextField(
         _('biography'),
         blank=True,
         help_text=_('Optional: Write a short bio to display on your profile.'),
+    )
+    date_of_birth = models.DateField(
+        _('date of birth'),
+        blank=True,
+        null=True,
+        help_text=_("Optional: Your birth date."),
+    )
+    city = models.CharField(
+        _('city'),
+        max_length=100,
+        blank=True,
+        help_text=_('Your city of residence.'),
     )
     country = CountryField(
         _('country of residence'),
@@ -56,6 +73,55 @@ class Profile(models.Model):
         blank=True,
         null=True,
         help_text=_('Optional: Upload a profile image.'),
+    )
+
+    personal_website = models.URLField(
+        _('personal website'),
+        blank=True,
+        null=True,
+        help_text=_("Optional: Your personal/portfolio website."),
+    )
+    linkedin = models.URLField(
+        _('LinkedIn'),
+        blank=True,
+        null=True,
+        help_text=_("Optional: Your LinkedIn profile."),
+    )
+    twitter = models.URLField(
+        _('Twitter'),
+        blank=True,
+        null=True,
+        help_text=_("Optional: You Twitter profile.")
+    )
+    github = models.URLField(
+        _('GitHub'),
+        blank=True,
+        null=True,
+        help_text=_("Optional: Your GitHub profile."),
+    )
+    gitlab = models.URLField(
+        _('GitLab'),
+        blank=True,
+        null=True,
+        help_text=_("Optional: Your GitLab profile."),
+    )
+
+    tech_stack = models.ManyToManyField(
+        'common.Technology',
+        blank=True,
+        help_text=_("Your tech stack."),
+    )
+    contact_email = models.EmailField(
+        _('contact email'),
+        blank=True,
+        null=True,
+        help_text=_("Optional: Public email for professional contacts."),
+    )
+    languages = models.CharField(
+        _('languages'),
+        max_length=255,
+        blank=True,
+        help_text=_("Optional: Languages you speak (e.g., English, Spanish)."),
     )
 
     def __str__(self) -> str:

@@ -64,9 +64,9 @@ class ForumPost(models.Model):
         auto_now=True,
     )
 
-    tags = GenericRelation(TaggedItem)
     comments = GenericRelation(Comment)
     stars = GenericRelation(Star)
+    tags = GenericRelation(TaggedItem)
 
     class Meta:
         ordering = ['-is_pinned', '-created_at']

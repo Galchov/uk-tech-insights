@@ -107,7 +107,7 @@ class Profile(models.Model):
     )
 
     tech_stack = models.ManyToManyField(
-        'common.Technology',
+        'technologies.Technology',
         blank=True,
         help_text=_("Your tech stack."),
     )

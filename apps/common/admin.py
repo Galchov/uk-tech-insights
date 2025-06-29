@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Tag, TaggedItem, Comment, Star, Technology
+from .models import Tag, TaggedItem, Comment, Star
 
 
 @admin.register(Tag)
@@ -24,9 +24,3 @@ class CommentAdmin(admin.ModelAdmin):
 class StarAdmin(admin.ModelAdmin):
     list_display = ['user', 'content_object', 'starred_at']
     readonly_fields = ['starred_at']
-
-
-@admin.register(Technology)
-class TechnologyAdmin(admin.ModelAdmin):
-    list_display = ['name', 'website']
-    search_fields = ['name']

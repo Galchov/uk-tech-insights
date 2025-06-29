@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.fields import GenericRelation
 from django.urls import reverse
 
-from apps.common.models import Tag, Comment, Star
+from apps.common.models import Comment, Star, TaggedItem
 
 
 class BaseLearningContent(models.Model):
@@ -61,13 +61,6 @@ class BaseLearningContent(models.Model):
         verbose_name=_('authors'),
         help_text=_("Users credited as authors.")
     )
-    tags = models.ManyToManyField(
-        Tag,
-        blank=True,
-        related_name='%(class)ss',
-        verbose_name=_('tags'),
-        help_text=_("Tags for categorizing content."),
-    )
     is_published = models.BooleanField(
         _('is published'),
         default=False,
@@ -81,8 +74,10 @@ class BaseLearningContent(models.Model):
         _('updated at'),
         auto_now=True,
     )
+    
     comments = GenericRelation(Comment)
     stars = GenericRelation(Star)
+    tags = GenericRelation(TaggedItem)
 
     class Meta:
         abstract = True

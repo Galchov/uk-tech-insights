@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
 
 from .models import Tutorial, Article, TutorialCompletion
-from apps.common.models import Comment
+from apps.common.models import Comment, Star, TaggedItem
 
 
 class TutorialCompletionInLine(admin.TabularInline):
@@ -15,6 +15,16 @@ class CommentInLine(GenericTabularInline):
     model = Comment
     extra = 0
     readonly_fields = ['user', 'content']
+
+
+class StarInLine(GenericTabularInline):
+    model = Star
+    extra = 0
+
+
+class TaggedItemInLine(GenericTabularInline):
+    model = TaggedItem
+    extra = 0
 
 
 @admin.register(Tutorial)
@@ -34,6 +44,7 @@ class ArticleAdmin(admin.ModelAdmin):
     search_fields = ['title', 'summary', 'content']
     prepopulated_fields = {'slug': ['title']}
     filter_horizontal = ['authors']
+    inlines = [CommentInLine, StarInLine, TaggedItemInLine]
 
 
 @admin.register(TutorialCompletion)

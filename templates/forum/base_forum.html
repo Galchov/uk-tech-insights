@@ -3,5 +3,13 @@
 {% block title %}Forum | UK Tech Insights{% endblock %}
 
 {% block content %}
-
+<h1>Forum</h1>
+<nav>
+    <a href="{% url 'forum:post_list' %}">All Posts</a> |
+    <a href="{% url 'forum:post_create' %}">Create Post</a> |
+    <a href="{% url 'forum:category_list' %}">Categories</a>
+</nav>
+<hr>
+{% block forum_content %}
+{% endblock %}
 {% endblock %}

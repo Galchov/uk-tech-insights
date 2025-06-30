@@ -28,7 +28,7 @@ class PostDetailView(DetailView):
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = ForumPost
     template_name = 'forum/post_form.html'
-    fields = ['title', 'content', 'category', 'tags', 'is_pinned', 'is_closed', 'is_published']
+    fields = ['title', 'content', 'category', 'is_pinned', 'is_closed', 'is_published']
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -38,7 +38,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = ForumPost
     template_name = 'forum/post_form.html'
-    fields = ['title', 'content', 'category', 'tags', 'is_pinned', 'is_closed', 'is_published']
+    fields = ['title', 'content', 'category', 'is_pinned', 'is_closed', 'is_published']
 
     def test_func(self):
         post = self.get_object()

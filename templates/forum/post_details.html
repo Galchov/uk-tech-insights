@@ -3,5 +3,14 @@
 {% block title %}Post Details | UK Tech Insights{% endblock %}
 
 {% block forum_content %}
+<h2>{{ post.title }}</h2>
+<p>Author: {{ post.author }}</p>
+<p>Content: {{ post.content }}</p>
+<p>Category: {{ post.category }}</p>
+<p>Views: {{ post.views }}</p>
 
+<p>
+    <a href="{% url 'forum:post_edit' slug=post.slug %}">Edit</a> |
+    <a href="{% url 'forum:post_delete' slug=post.slug %}">Delete</a>
+</p>
 {% endblock %}

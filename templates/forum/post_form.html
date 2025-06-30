@@ -3,5 +3,11 @@
 {% block title %}Post Form | UK Tech Insights{% endblock %}
 
 {% block forum_content %}
+<h2>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Post</h2>
 
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+</form>
 {% endblock %}

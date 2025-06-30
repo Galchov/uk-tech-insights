@@ -4,6 +4,7 @@ from django.conf import settings
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.fields import GenericRelation
+from django.db.models import F
 
 from apps.common.models import TaggedItem, Comment, Star
 
@@ -83,15 +84,19 @@ class ForumPost(models.Model):
 
             counter = 1
             while ForumPost.objects.filter(slug=unique_slug).exists():
-                unique_slug = f"{base_slug} - {counter}"
+                unique_slug = f"{base_slug}-{counter}"
                 counter += 1
             
             self.slug = unique_slug
 
         super().save(*args, **kwargs)
     
-    def get_absoulte_url(self):
+    def get_absolute_url(self):
         return reverse('forum:post_detail', kwargs={'slug': self.slug})
+    
+    def increment_views(self):
+        ForumPost.objects.filter(pk=self.pk).update(views=F('views') + 1)
+        self.refresh_from_db(fields=['views'])
     
 
 class ForumCategory(models.Model):
@@ -124,3 +129,17 @@ class ForumCategory(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.name)
+            unique_slug = base_slug
+
+            counter = 1
+            while ForumCategory.objects.filter(slug=unique_slug).exists():
+                unique_slug = f"{base_slug}-{counter}"
+                counter += 1
+            
+            self.slug = unique_slug
+
+        super().save(*args, **kwargs)

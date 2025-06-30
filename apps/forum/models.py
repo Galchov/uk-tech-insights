@@ -92,7 +92,7 @@ class ForumPost(models.Model):
         super().save(*args, **kwargs)
     
     def get_absolute_url(self):
-        return reverse('forum:post_detail', kwargs={'slug': self.slug})
+        return reverse('forum:post_details', kwargs={'slug': self.slug})
     
     def increment_views(self):
         ForumPost.objects.filter(pk=self.pk).update(views=F('views') + 1)

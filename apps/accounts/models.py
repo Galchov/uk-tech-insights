@@ -25,7 +25,7 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
 
     def __str__(self) -> str:
-        return self.email
+        return self.username
 
     def save(self, *args, **kwargs) -> None:
         self.email = self.email.lower()

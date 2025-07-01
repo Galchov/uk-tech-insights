@@ -5,7 +5,7 @@
 {% block content %}
 <h1>Register for UK Tech Insights</h1>
 
-<form method="POST" action="{% url 'register' %}">
+<form method="POST" action="{% url 'accounts:register' %}">
     {% csrf_token %}
     {% for field in form %}
         <div class="form-group">
@@ -26,5 +26,5 @@
     <button type="submit">Register</button>
 </form>
 
-<p>Already have an account? <a href="{% url 'login' %}">Sign in here</a>.</p>
+<p>Already have an account? <a href="{% url 'accounts:login' %}">Sign in here</a>.</p>
 {% endblock %}

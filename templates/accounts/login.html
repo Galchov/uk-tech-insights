@@ -4,7 +4,7 @@
 
 {% block content %}
 <h2>Sign In</h2>
-<form method="POST" action="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
+<form method="POST" action="{% url 'accounts:login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
     {% csrf_token %}
 
     {% if messages %}
@@ -34,9 +34,9 @@
     </div>
 
     <div class="form-links">
-        <a href="{% url 'password_reset' %}" class="button-link">Forgotten password?</a>
+        <a href="{% url 'accounts:password_reset' %}" class="button-link">Forgotten password?</a>
         <p>Don't have an account?</p>
-        <a href="{% url 'register' %}" class="button-link">Register</a>
+        <a href="{% url 'accounts:register' %}" class="button-link">Register</a>
     </div>
 </form>
 {% endblock %}

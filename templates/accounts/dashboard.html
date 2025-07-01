@@ -69,10 +69,10 @@
                     <h2 class="card-title">Account Settings</h2>
                     <p class="card-text">Manage your account and preferences</p>
                     <ul class="list-unstyled">
-                        <li><a href="{% url 'password_change' user.pk %}">Change Password</a></li>
-                        <li><a href="{% url 'profile_edit' user.pk %}">Edit Profile</a></li>
-                        <li><a href="{% url 'account_edit' user.pk %}">Edit Account</a></li>
-                        <li><a href="{% url 'delete_account' user.pk %}">Delete Account</a></li>
+                        <li><a href="{% url 'accounts:password_change' user.pk %}">Change Password</a></li>
+                        <li><a href="{% url 'accounts:profile_edit' user.pk %}">Edit Profile</a></li>
+                        <li><a href="{% url 'accounts:account_edit' user.pk %}">Edit Account</a></li>
+                        <li><a href="{% url 'accounts:delete_account' user.pk %}">Delete Account</a></li>
                         <li><a href="#">Privacy & Security</a></li>
                         {% if user.is_staff %}
                             <li><a href="{% url 'admin:index' %}">Admin Panel</a></li>

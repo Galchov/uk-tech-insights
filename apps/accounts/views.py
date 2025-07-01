@@ -2,13 +2,15 @@ from django.shortcuts import render, redirect
 from django.http import HttpRequest, HttpResponse
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib import messages
+from django.contrib.auth import logout
 from django.urls import reverse_lazy, reverse
 from django.views.generic.edit import FormView
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, UpdateView, DeleteView
 
-from .forms import CustomRegistrationForm, CustomEmailAuthenticationForm
+from .forms import CustomRegistrationForm, CustomEmailAuthenticationForm, ProfileForm, AccountForm
+from .models import CustomUser, Profile
 
 
 class CustomLoginView(auth_views.LoginView):
@@ -100,11 +102,43 @@ class CustomDashboardView(LoginRequiredMixin, TemplateView):
         return context
 
 
-# @login_required
-def profile_edit_view(request: HttpRequest, pk: int) -> HttpResponse:
-    return render(request, 'accounts/profile_edit.html')
+class ProfileEditView(LoginRequiredMixin, UpdateView):
+    model = Profile
+    template_name = 'accounts/profile_edit.html'
+    form_class = ProfileForm
+
+    def get_object(self, queryset=None):
+        return self.request.user.profile
+    
+    def get_success_url(self):
+        return reverse_lazy('accounts:profile_detail', kwargs={'pk': self.request.user.pk})
 
 
-# @login_required
-def delete_account_view(request: HttpRequest, pk: int) -> HttpResponse:
-    return render(request, 'accounts/delete_account.html')
+class AccountEditView(LoginRequiredMixin, UpdateView):
+    model = CustomUser
+    template_name = 'accounts/account_edit.html'
+    form_class = AccountForm
+
+    def get_object(self, queryset=None):
+        return self.request.user
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user
+        return context
+    
+    def get_success_url(self):
+        return reverse_lazy('accounts:profile_detail', kwargs={'pk': self.request.user.pk})
+
+
+class AccountDeleteView(LoginRequiredMixin, DeleteView):
+    model = CustomUser
+    template_name = 'accounts/delete_account.html'
+    success_url = reverse_lazy('home')
+
+    def get_object(self, queryset=None):
+        return self.request.user
+    
+    def delete(self, request, *args, **kwargs):
+        logout(request)
+        return super().delete(request, *args, **kwargs)

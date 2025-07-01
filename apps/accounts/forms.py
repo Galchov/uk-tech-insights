@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
 from django import forms
 
-from .models import CustomUser
+from .models import CustomUser, Profile
 
 
 class CustomRegistrationForm(UserCreationForm):
@@ -40,3 +40,20 @@ class CustomEmailAuthenticationForm(AuthenticationForm):
         if not user.is_active:
             raise forms.ValidationError("This account is inactive.", code='inactive')
     
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = [
+            'headline', 'bio', 'date_of_birth', 'city', 'country', 'profile_picture',
+            'personal_website', 'linkedin', 'twitter', 'github', 'gitlab',
+            'tech_stack', 'contact_email', 'languages',
+        ]
+
+
+class AccountForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = [
+            'username', 'email', 'first_name', 'last_name',
+        ]

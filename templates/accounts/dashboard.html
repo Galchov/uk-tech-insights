@@ -71,6 +71,7 @@
                     <ul class="list-unstyled">
                         <li><a href="{% url 'password_change' user.pk %}">Change Password</a></li>
                         <li><a href="{% url 'profile_edit' user.pk %}">Edit Profile</a></li>
+                        <li><a href="{% url 'account_edit' user.pk %}">Edit Account</a></li>
                         <li><a href="{% url 'delete_account' user.pk %}">Delete Account</a></li>
                         <li><a href="#">Privacy & Security</a></li>
                         {% if user.is_staff %}

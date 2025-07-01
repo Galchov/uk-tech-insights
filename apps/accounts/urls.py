@@ -2,6 +2,8 @@ from django.urls import include, path
 from . import views
 
 
+# app_name = 'accounts'
+
 urlpatterns = [
     path('login/', views.CustomLoginView.as_view(), name="login"),
     path('logout/', views.CustomLogoutView.as_view(), name="logout"),
@@ -13,8 +15,9 @@ urlpatterns = [
     path('password-reset/complete/', views.CustomPasswordResetCompleteView.as_view(), name="password_reset_complete"),
 
     path('profile/<int:pk>/', views.CustomDashboardView.as_view(), name="dashboard"),
-    path('profile/<int:pk>/edit/', views.profile_edit_view, name="profile_edit"),
+    path('profile/<int:pk>/profile_edit/', views.ProfileEditView.as_view(), name="profile_edit"),
+    path('profile/<int:pk>/account_edit/', views.AccountEditView.as_view(), name="account_edit"),
     path('profile/<int:pk>/password-change/', views.CustomPasswordChangeView.as_view(), name="password_change"),
     path('profile/<int:pk>/password-change-done/', views.CustomPasswordChangeDoneView.as_view(), name="password_change_done"),
-    path('profile/<int:pk>/delete-account/', views.delete_account_view, name="delete_account"),
+    path('profile/<int:pk>/delete-account/', views.AccountDeleteView.as_view(), name="delete_account"),
 ]

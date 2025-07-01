@@ -13,6 +13,8 @@ from .forms import CustomRegistrationForm, CustomEmailAuthenticationForm, Profil
 from .models import CustomUser, Profile
 
 
+##### Authentication #####
+
 class CustomLoginView(auth_views.LoginView):
     template_name = 'accounts/login.html'
     authentication_form = CustomEmailAuthenticationForm
@@ -20,7 +22,7 @@ class CustomLoginView(auth_views.LoginView):
     extra_context = {'hide_navbar': True}
 
     def get_success_url(self):
-        return reverse('dashboard', kwargs={'pk': self.request.user.pk}) or self.get_redirect_url()
+        return reverse('accounts:dashboard', kwargs={'pk': self.request.user.pk}) or self.get_redirect_url()
     
     def form_invalid(self, form):
         messages.error(self.request, "Invalid Email or Passowrd. Please try again.")
@@ -28,7 +30,7 @@ class CustomLoginView(auth_views.LoginView):
 
 
 class CustomLogoutView(auth_views.LogoutView):
-    next_page = 'login'
+    next_page = reverse_lazy('accounts:login')
 
     def dispatch(self, request, *args, **kwargs):
         messages.success(self.request, "You have been logged out.")
@@ -38,7 +40,7 @@ class CustomLogoutView(auth_views.LogoutView):
 class CustomRegisterView(SuccessMessageMixin, FormView):
     template_name = 'accounts/register.html'
     form_class = CustomRegistrationForm
-    success_url = reverse_lazy('login')
+    success_url = reverse_lazy('accounts:login')
     success_message = "%(username)s, your account has successfully been created."
     extra_context = {'hide_navbar': True}
 
@@ -52,16 +54,19 @@ class CustomPasswordChangeView(LoginRequiredMixin, auth_views.PasswordChangeView
     template_name = 'accounts/password_change.html'
     
     def get_success_url(self):
-        return reverse('password_change_done', kwargs={'pk': self.request.user.pk})
+        return reverse('accounts:password_change_done', kwargs={'pk': self.request.user.pk})
 
 
 class CustomPasswordChangeDoneView(LoginRequiredMixin, auth_views.PasswordChangeDoneView):
     template_name='accounts/password_change_done.html'
 
 
+##### Password Reset Cycle #####
+
 class CustomPasswordResetView(auth_views.PasswordResetView):
     template_name='accounts/password_reset_request.html'
     email_template_name='accounts/password_reset_email.html'
+    success_url = reverse_lazy('accounts:password_reset_done')
     extra_context = {'hide_navbar': True}
 
 
@@ -72,6 +77,7 @@ class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
 
 class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
     template_name='accounts/password_reset_confirm.html'
+    success_url = reverse_lazy('accounts:password_reset_complete')
     extra_context = {'hide_navbar': True}
 
 
@@ -80,9 +86,11 @@ class CustomPasswordResetCompleteView(auth_views.PasswordResetCompleteView):
     extra_context = {'hide_navbar': True}
 
 
+##### Account and Profile Details #####
+
 class CustomDashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'accounts/dashboard.html'
-    login_url = 'login'
+    login_url = 'accounts:login'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -111,7 +119,7 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
         return self.request.user.profile
     
     def get_success_url(self):
-        return reverse_lazy('accounts:profile_detail', kwargs={'pk': self.request.user.pk})
+        return reverse_lazy('accounts:dashboard', kwargs={'pk': self.request.user.pk})
 
 
 class AccountEditView(LoginRequiredMixin, UpdateView):
@@ -128,13 +136,13 @@ class AccountEditView(LoginRequiredMixin, UpdateView):
         return context
     
     def get_success_url(self):
-        return reverse_lazy('accounts:profile_detail', kwargs={'pk': self.request.user.pk})
+        return reverse_lazy('accounts:dashboard', kwargs={'pk': self.request.user.pk})
 
 
 class AccountDeleteView(LoginRequiredMixin, DeleteView):
     model = CustomUser
     template_name = 'accounts/delete_account.html'
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('common:home')
 
     def get_object(self, queryset=None):
         return self.request.user

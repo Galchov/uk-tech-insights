@@ -7,11 +7,15 @@
 <nav>
     <a href="{% url 'forum:post_list' %}">All Posts</a> |
 
+    <a href="{% url 'forum:category_list' %}">Categories</a> |
+
     {% if perms.forum.add_forumpost %}
         <a href="{% url 'forum:post_create' %}">Create Post</a> |
     {% endif %}
 
-    <a href="{% url 'forum:category_list' %}">Categories</a>
+    {% if user.is_authenticated %}
+        <a href="{% url 'forum:user_posts' %}">My Posts</a>
+    {% endif %}
 </nav>
 <hr>
 {% block forum_content %}

@@ -188,3 +188,13 @@ class ClosePostView(PermissionRequiredMixin, View):
         post.is_closed = True
         post.save()
         return redirect(post.get_absolute_url())
+
+
+class UserPostsListView(LoginRequiredMixin, ListView):
+    model = ForumPost
+    template_name = 'forum/user_posts.html'
+    context_object_name = 'posts'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return ForumPost.objects.filter(author=self.request.user).order_by('-created_at')

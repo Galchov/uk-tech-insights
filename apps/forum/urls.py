@@ -7,6 +7,7 @@ app_name = 'forum'
 urlpatterns = [
     path('', views.ForumPostListView.as_view(), name="post_list"),
     path('post/create/', views.ForumPostCreateView.as_view(), name="post_create"),
+    path('user-posts/', views.UserPostsListView.as_view(), name="user_posts"),
     path('post/<slug:slug>/', views.ForumPostDetailView.as_view(), name="post_details"),
     path('post/<slug:slug>/edit/', views.ForumPostUpdateView.as_view(), name="post_edit"),
     path('post/<slug:slug>/delete/', views.ForumPostDeleteView.as_view(), name="post_delete"),

@@ -1,0 +1,35 @@
+{% extends 'forum/base_forum.html' %}
+
+{% block title %}My Posts | UK Tech Insights{% endblock %}
+
+{% block forum_content %}
+<h2>My Posts</h2>
+
+{% for post in posts %}
+<div>
+    <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+    <p>Category: {{ post.category }}</p>
+    <p>Views: {{ post.views }}</p>
+    <p>Published: {{ post.is_published }}</p>
+</div>
+<hr>
+{% empty %}
+<p>You haven't created any posts yet.</p>
+{% endfor %}
+
+{% if is_paginated %}
+<div>
+    {% if page_obj.has_previous %}
+    <a href="?page=1">First</a>
+    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">Next</a>
+    <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

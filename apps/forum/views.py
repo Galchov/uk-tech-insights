@@ -51,6 +51,42 @@ class ForumPostCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateVie
     
     def handle_no_permission(self):
         raise PermissionDenied("You do not have permission to create posts. Please verify your account.")
+    
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+
+        can_moderate = (
+            self.request.user.has_perm('forum.can_pin_posts')
+            or self.request.user.has_perm('forum.can_close_posts')
+            or self.request.user.has_perm('forum.can_publish_posts')
+        )
+
+        if not can_moderate:
+            form.fields['is_pinned'].widget.attrs['disabled'] = True
+            form.fields['is_closed'].widget.attrs['disabled'] = True
+            form.fields['is_published'].widget.attrs['disabled'] = True
+
+            form.fields['is_pinned'].initial = False
+            form.fields['is_closed'].initial = False
+            form.fields['is_published'].initial = False
+
+        return form
+    
+    def form_valid(self, form):
+        can_moderate = (
+            self.request.user.has_perm('forum.can_pin_posts')
+            or self.request.user.has_perm('forum.can_close_posts')
+            or self.request.user.has_perm('forum.can_publish_posts')
+        )
+
+        if not can_moderate:
+            form.instance.is_pinned = False
+            form.instance.is_closed = False
+            form.instance.is_published = False
+
+        form.instance.author = self.request.user
+
+        return super().form_valid(form)
 
 
 class ForumPostUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -69,6 +105,38 @@ class ForumPostUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UserPasse
     
     def handle_no_permission(self):
         raise PermissionDenied("You have no permission to update this post.")
+    
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+
+        can_moderate = (
+            self.request.user.has_perm('forum.can_pin_posts')
+            or self.request.user.has_perm('forum.can_close_posts')
+            or self.request.user.has_perm('forum.can_publish_posts')
+        )
+
+        if not can_moderate:
+            form.fields['is_pinned'].widget.attrs['disabled'] = True
+            form.fields['is_closed'].widget.attrs['disabled'] = True
+            form.fields['is_published'].widget.attrs['disabled'] = True
+
+        return form
+    
+    def form_valid(self, form):
+        can_moderate = (
+            self.request.user.has_perm('forum.can_pin_posts')
+            or self.request.user.has_perm('forum.can_close_posts')
+            or self.request.user.has_perm('forum.can_publish_posts')
+        )
+
+        if not can_moderate:
+            form.instance.is_pinned = False
+            form.instance.is_closed = False
+            form.instance.is_published = False
+
+        form.instance.author = self.request.user
+
+        return super().form_valid(form)
     
 
 class ForumPostDeleteView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, DeleteView):

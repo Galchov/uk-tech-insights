@@ -6,7 +6,11 @@
 <h1>Forum</h1>
 <nav>
     <a href="{% url 'forum:post_list' %}">All Posts</a> |
-    <a href="{% url 'forum:post_create' %}">Create Post</a> |
+
+    {% if perms.forum.add_forumpost %}
+        <a href="{% url 'forum:post_create' %}">Create Post</a> |
+    {% endif %}
+
     <a href="{% url 'forum:category_list' %}">Categories</a>
 </nav>
 <hr>

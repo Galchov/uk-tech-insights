@@ -9,8 +9,35 @@
 <p>Category: {{ post.category }}</p>
 <p>Views: {{ post.views }}</p>
 
-<p>
-    <a href="{% url 'forum:post_edit' slug=post.slug %}">Edit</a> |
-    <a href="{% url 'forum:post_delete' slug=post.slug %}">Delete</a>
-</p>
+{% if user.is_authenticated and perms.forum.change_forumpost %}
+    {% if user == post.author or perms.forum.can_edit_others_posts %}
+        <p>
+            <a href="{% url 'forum:post_edit' slug=post.slug %}">Edit</a> |
+            <a href="{% url 'forum:post_delete' slug=post.slug %}">Delete</a>
+        </p>
+    {% endif %}
+{% endif %}
+
+{% if user.is_authenticated %}
+    {% if perms.forum.can_publish_posts and not post.is_published %}
+        <form action="{% url 'forum:publish_post' slug=post.slug %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit">Publish</button>
+        </form>
+    {% endif %}
+
+    {% if perms.forum.can_pin_posts and not post.is_pinned %}
+        <form action="{% url 'forum:pin_post' slug=post.slug %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit">Pin</button>
+        </form>
+    {% endif %}
+
+    {% if perms.forum.can_close_posts and not post.is_closed %}
+        <form action="{% url 'forum:close_post' slug=post.slug %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit">Close</button>
+        </form>
+    {% endif %}
+{% endif %}
 {% endblock %}

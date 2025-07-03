@@ -9,10 +9,10 @@ urlpatterns = [
     path('post/create/', views.ForumPostCreateView.as_view(), name="post_create"),
     path('post/<slug:slug>/', views.ForumPostDetailView.as_view(), name="post_details"),
     path('post/<slug:slug>/edit/', views.ForumPostUpdateView.as_view(), name="post_edit"),
+    path('post/<slug:slug>/delete/', views.ForumPostDeleteView.as_view(), name="post_delete"),
     path('post/<slug:slug>/publish/', views.PublishPostView.as_view(), name="publish_post"),
     path('post/<slug:slug>/pin/', views.PinPostView.as_view(), name="pin_post"),
     path('post/<slug:slug>/close/', views.ClosePostView.as_view(), name="close_post"),
-    path('post/<slug:slug>/delete/', views.ForumPostDeleteView.as_view(), name="post_delete"),
 
     path('categories/', views.CategoryListView.as_view(), name="category_list"),
 ]

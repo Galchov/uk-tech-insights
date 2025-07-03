@@ -73,6 +73,12 @@ class ForumPost(models.Model):
         ordering = ['-is_pinned', '-created_at']
         verbose_name = _('forum post')
         verbose_name_plural = _('forum posts')
+        permissions = [
+            ("can_publish_posts", "Can publish posts"),
+            ("can_pin_posts", "Can pin posts"),
+            ("can_close_posts", "Can close posts"),
+            ("can_edit_others_posts", "Can edit others' posts"),
+        ]
     
     def __str__(self):
         return self.title

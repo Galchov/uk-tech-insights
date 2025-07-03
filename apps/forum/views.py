@@ -1,6 +1,9 @@
+from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
 
 from .models import ForumPost, ForumCategory
 
@@ -47,9 +50,7 @@ class ForumPostCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateVie
         return super().form_valid(form)
     
     def handle_no_permission(self):
-        if self.raise_exception or self.request.user.is_authenticated:
-            raise PermissionDenied("You do not have permission to create posts. Please verify your account.")
-        return super().handle_no_permission()
+        raise PermissionDenied("You do not have permission to create posts. Please verify your account.")
 
 
 class ForumPostUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -60,25 +61,62 @@ class ForumPostUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UserPasse
 
     def test_func(self):
         post = self.get_object()
-        return self.request.user == post.author or self.request.user.is_staff
+        if self.request.user == post.author:
+            return True
+        if self.request.user.has_perm('forum.can_edit_others_posts'):
+            return True
+        return False
     
     def handle_no_permission(self):
-        if self.raise_exception or self.request.user.is_authenticated:
-            raise PermissionDenied("You have no permission to update this post.")
-        return super().handle_no_permission()
+        raise PermissionDenied("You have no permission to update this post.")
     
 
 class ForumPostDeleteView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, DeleteView):
     model = ForumPost
     template_name = 'forum/post_confirm_delete.html'
-    success_url = '/forum/'
+    success_url = reverse_lazy('forum:post_list')
     permission_required = 'forum.delete_forumpost'
 
     def test_func(self):
         post = self.get_object()
-        return self.request.user == post.author or self.request.user.is_staff
+        if self.request.user == post.author:
+            return True
+        if self.request.user.has_perm('forum.can_edit_others_posts'):
+            return True
+        return False
     
     def handle_no_permission(self):
-        if self.raise_exception or self.request.user.is_authenticated:
-            raise PermissionDenied("You do not have permission to delete this post.")
-        return super().handle_no_permission()
+        raise PermissionDenied("You do not have permission to delete this post.")
+
+
+class PublishPostView(PermissionRequiredMixin, View):
+    permission_required = 'forum.can_publish_posts'
+    raise_exception = True
+
+    def post(self, request, slug, *args, **kwargs):
+        post = get_object_or_404(ForumPost, slug=slug)
+        post.is_published = True
+        post.save()
+        return redirect(post.get_absolute_url())
+
+
+class PinPostView(PermissionRequiredMixin, View):
+    permission_required = 'forum.can_pin_posts'
+    raise_exception = True
+
+    def post(self, request, slug, *args, **kwargs):
+        post = get_object_or_404(ForumPost, slug=slug)
+        post.is_pinned = True
+        post.save()
+        return redirect(post.get_absolute_url())
+
+
+class ClosePostView(PermissionRequiredMixin, View):
+    permission_required = 'forum.can_close_posts'
+    raise_exception = True
+
+    def post(self, request, slug, *args, **kwargs):
+        post = get_object_or_404(ForumPost, slug=slug)
+        post.is_closed = True
+        post.save()
+        return redirect(post.get_absolute_url())

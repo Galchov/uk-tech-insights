@@ -20,21 +20,21 @@
 
 {% if user.is_authenticated %}
     {% if perms.forum.can_publish_posts and not post.is_published %}
-        <form action="{% url 'forum:publish_post' slug=post.slug %}" method="post" style="display:inline;">
+        <form action="{% url 'forum:publish_post' slug=post.slug %}" method="post">
             {% csrf_token %}
             <button type="submit">Publish</button>
         </form>
     {% endif %}
 
     {% if perms.forum.can_pin_posts and not post.is_pinned %}
-        <form action="{% url 'forum:pin_post' slug=post.slug %}" method="post" style="display:inline;">
+        <form action="{% url 'forum:pin_post' slug=post.slug %}" method="post">
             {% csrf_token %}
             <button type="submit">Pin</button>
         </form>
     {% endif %}
 
     {% if perms.forum.can_close_posts and not post.is_closed %}
-        <form action="{% url 'forum:close_post' slug=post.slug %}" method="post" style="display:inline;">
+        <form action="{% url 'forum:close_post' slug=post.slug %}" method="post">
             {% csrf_token %}
             <button type="submit">Close</button>
         </form>

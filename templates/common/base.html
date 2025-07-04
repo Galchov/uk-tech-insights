@@ -5,80 +5,53 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}UK Tech Insights{% endblock %}</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
-    <style>
-        body {
-            background-color: #eaf4fb; /* very light blue */
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        main {
-            flex: 1;
-        }
-    </style>
 </head>
-<body class="text-dark">
-    <header class="bg-white border-bottom">
-        <div class="container-fluid d-flex flex-wrap align-items-center justify-content-between py-2">
-            <div class="d-flex align-items-center">
-                <a href="{% url 'common:home' %}" class="d-flex align-items-center text-primary text-decoration-none">
-                    <img src="{% static 'images/navbar_logo.png' %}" alt="UK Tech Insights Logo" width="40" class="me-2">
-                    <span class="fs-5 fw-bold">UK Tech Insights</span>
-                </a>
-            </div>
+<body>
+    <header>
+        <div>
+            <a href="{% url 'common:home' %}">
+                <img src="{% static 'images/navbar_logo.png' %}" alt="UK Tech Insights Logo" width="40">
+                <span>UK Tech Insights</span>
+            </a>
+        </div>
 
-            <form class="d-flex mx-3" style="max-width: 450px; width: 100%;" method="get" action="#">
-                <input class="form-control me-2" type="search" name="q" placeholder="Search..." aria-label="Search">
-                <button class="btn btn-outline-primary" type="submit">Search</button>
-            </form>
+        <form method="get" action="#">
+            <input type="search" name="q" placeholder="Search..." aria-label="Search">
+            <button type="submit">Search</button>
+        </form>
 
-            <div class="d-flex align-items-center gap-2">
-                {% if user.is_authenticated %}
-                    <a href="{% url 'accounts:dashboard' user.pk %}" class="btn btn-outline-primary">Dashboard</a>
-                    <form method="POST" action="{% url 'accounts:logout' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-link text-decoration-none text-primary">Sign Out</button>
-                    </form>
-                {% else %}
-                    <a href="{% url 'accounts:login' %}" class="btn btn-link text-decoration-none text-primary">Sign In</a>
-                {% endif %}
-            </div>
+        <div>
+            {% if user.is_authenticated %}
+                <a href="{% url 'accounts:dashboard' user.pk %}">Dashboard</a>
+                <form method="POST" action="{% url 'accounts:logout' %}">
+                    {% csrf_token %}
+                    <button type="submit">Sign Out</button>
+                </form>
+            {% else %}
+                <a href="{% url 'accounts:login' %}">Sign In</a>
+            {% endif %}
         </div>
     </header>
 
     {% if not hide_navbar %}
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary bg-gradient">
-        <div class="container justify-content-center">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse justify-content-center" id="navbarMain">
-                <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link text-white" href="#">News</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Companies</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Job Market</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Learning</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="{% url 'forum:post_list' %}">Forum</a></li>
-                </ul>
-            </div>
-        </div>
+    <nav>
+        <ul>
+            <li><a href="#">News</a></li>
+            <li><a href="#">Companies</a></li>
+            <li><a href="#">Job Market</a></li>
+            <li><a href="#">Learning</a></li>
+            <li><a href="{% url 'forum:post_list' %}">Forum</a></li>
+        </ul>
     </nav>
     {% endif %}
 
-    <main class="container py-4">
+    <main>
         {% block content %}
         {% endblock %}
     </main>
 
-    <footer class="bg-primary bg-gradient text-white text-center py-3 border-top mt-4">
-        <p class="mb-0">&copy; 2025 UK Tech Insights. All rights reserved.</p>
+    <footer>
+        <p>&copy; 2025 UK Tech Insights. All rights reserved.</p>
     </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

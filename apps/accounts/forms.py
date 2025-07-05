@@ -41,17 +41,32 @@ class CustomEmailAuthenticationForm(AuthenticationForm):
             raise forms.ValidationError("This account is inactive.", code='inactive')
     
 
-class ProfileForm(forms.ModelForm):
+class ProfileEditForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = [
-            'headline', 'bio', 'date_of_birth', 'city', 'country', 'profile_picture',
-            'personal_website', 'linkedin', 'twitter', 'github', 'gitlab',
-            'tech_stack', 'contact_email', 'languages',
+            'headline',
+            'bio',
+            'date_of_birth',
+            'city',
+            'country',
+            'profile_picture',
+            'personal_website',
+            'linkedin',
+            'twitter',
+            'github',
+            'gitlab',
+            'tech_stack',
+            'contact_email',
+            'languages',
         ]
+        widgets = {
+            'bio': forms.Textarea(attrs={'rows': 4}),
+            'tech_stack': forms.CheckboxSelectMultiple(),
+        }
 
 
-class AccountForm(forms.ModelForm):
+class AccountEditForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = [

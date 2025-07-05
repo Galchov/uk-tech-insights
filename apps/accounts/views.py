@@ -9,7 +9,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic.edit import FormView
 from django.views.generic import TemplateView, UpdateView, DeleteView
 
-from .forms import CustomRegistrationForm, CustomEmailAuthenticationForm, ProfileForm, AccountForm
+from .forms import CustomRegistrationForm, CustomEmailAuthenticationForm, ProfileEditForm, AccountEditForm
 from .models import CustomUser, Profile
 
 
@@ -113,7 +113,7 @@ class CustomDashboardView(LoginRequiredMixin, TemplateView):
 class ProfileEditView(LoginRequiredMixin, UpdateView):
     model = Profile
     template_name = 'accounts/profile_edit.html'
-    form_class = ProfileForm
+    form_class = ProfileEditForm
 
     def get_object(self, queryset=None):
         return self.request.user.profile
@@ -125,7 +125,7 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
 class AccountEditView(LoginRequiredMixin, UpdateView):
     model = CustomUser
     template_name = 'accounts/account_edit.html'
-    form_class = AccountForm
+    form_class = AccountEditForm
 
     def get_object(self, queryset=None):
         return self.request.user

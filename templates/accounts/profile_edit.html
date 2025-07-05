@@ -99,5 +99,6 @@
     </div>
 
     <button type="submit">Save Changes</button>
+    <a href="{% url 'accounts:dashboard' pk=request.user.pk %}">Cancel</a>
 </form>
 {% endblock %}

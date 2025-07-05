@@ -17,6 +17,7 @@
 
     <div>
         <button type="submit">Delete My Account</button>
+        <a href="{% url 'accounts:dashboard' pk=request.user.pk %}">Cancel</a>
     </div>
 </form>
 {% endblock %}

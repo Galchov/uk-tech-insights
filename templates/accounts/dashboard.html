@@ -1,94 +1,121 @@
 {% extends 'common/base.html' %}
+{% load static %}
 
 {% block title %}Dashboard | UK Tech Insights{% endblock %}
 
 {% block content %}
-<section>
-    {% if profile.profile_picture %}
-        <img src="{{ profile.profile_picture.url }}" width="100" alt="Profile Picture">
-    {% endif %}
+<div class="container-fluid">
 
-    <h1>Welcome to your dashboard, {{ user.get_full_name|default:user.username }}</h1>
-    <p>Here’s a snapshot of your activity and shortcuts to everything you manage.</p>
-    <p>@{{ user.username }}</p>
-</section>
+    <!-- Profile intro -->
+    <div class="text-center mb-5">
+        {% if profile.profile_picture %}
+            <img src="{{ profile.profile_picture.url }}" width="100" class="rounded-circle mb-3" alt="Profile Picture">
+        {% endif %}
+        <h1>Welcome, {{ user.get_full_name|default:user.username }}</h1>
+        <p>Here’s a snapshot of your activity and shortcuts to everything you manage.</p>
+        <p class="text-muted">@{{ user.username }}</p>
+    </div>
 
-<section>
-    <div>
-        <div>
-            <h2>My Work</h2>
-            <p>Access and manage your contributions</p>
-            <ul>
-                <li><a href="#">My Posts</a></li>
-                <li><a href="#">My Tutorials</a></li>
-                <li><a href="#">Linked Content</a></li>
-                <li><a href="#">Bookmarked Items</a></li>
-                <li><a href="#">Drafts</a></li>
-            </ul>
+    <!-- Main sections grid -->
+    <div class="row g-4 justify-content-center">
+
+        <!-- My Work -->
+        <div class="col-12 col-lg-6">
+            <div class="border p-4 h-100">
+                <h2>My Work</h2>
+                <p>Access and manage your contributions</p>
+                <ul class="list-unstyled">
+                    <li><a href="#">My Posts</a></li>
+                    <li><a href="#">My Tutorials</a></li>
+                    <li><a href="#">Linked Content</a></li>
+                    <li><a href="#">Bookmarked Items</a></li>
+                    <li><a href="#">Drafts</a></li>
+                </ul>
+            </div>
         </div>
 
-        <div>
-            <h2>Connections</h2>
-            <p>Grow and engage with your network</p>
-            <ul>
-                <li><a href="#">Followers ({{ followers_count }})</a></li>
-                <li><a href="#">Following ({{ following_count }})</a></li>
-                <li><a href="#">Friend Requests (3)</a></li>
-                <li><a href="#">Suggested Users</a></li>
-            </ul>
+        <!-- Connections -->
+        <div class="col-12 col-lg-6">
+            <div class="border p-4 h-100">
+                <h2>Connections</h2>
+                <p>Grow and engage with your network</p>
+                <ul class="list-unstyled">
+                    <li><a href="#">Followers (0)</a></li>
+                    <li><a href="#">Following (0)</a></li>
+                    <li><a href="#">Friend Requests (0)</a></li>
+                    <li><a href="#">Suggested Users</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="col-12 col-lg-6">
+            <div class="border p-4 h-100">
+                <h2>Recent Activity</h2>
+                <p>Stay informed about your account and community interactions</p>
+                <ul class="list-unstyled">
+                    <li><a href="#">Notifications</a></li>
+                    <li><a href="#">Mentions</a></li>
+                    <li><a href="#">Comments on My Work</a></li>
+                    <li><a href="#">System Alerts</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Account Settings -->
+        <div class="col-12 col-lg-6">
+            <div class="border p-4 h-100">
+                <h2>Account Settings</h2>
+                <p>Manage your account and preferences</p>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'accounts:password_change' user.pk %}">Change Password</a></li>
+                    <li><a href="{% url 'accounts:profile_edit' user.pk %}">Edit Profile</a></li>
+                    <li><a href="{% url 'accounts:account_edit' user.pk %}">Edit Account</a></li>
+                    <li><a href="{% url 'accounts:delete_account' user.pk %}">Delete Account</a></li>
+                    <li><a href="#">Privacy & Security</a></li>
+                    {% if user.is_staff %}
+                        <li><a href="{% url 'admin:index' %}">Admin Panel</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="border p-4 mt-5 text-center">
+        <h2 class="mb-4">Quick Stats</h2>
+        <div class="row g-4 justify-content-center">
+
+            <div class="col-6 col-md-3">
+                <div>
+                    <p class="mb-1 fw-semibold">Posts</p>
+                    <h3>0</h3>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-3">
+                <div>
+                    <p class="mb-1 fw-semibold">Tutorials</p>
+                    <h3>0</h3>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-3">
+                <div>
+                    <p class="mb-1 fw-semibold">Followers</p>
+                    <h3>0</h3>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-3">
+                <div>
+                    <p class="mb-1 fw-semibold">Following</p>
+                    <h3>0</h3>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <div>
-        <div>
-            <h2>Recent Activity</h2>
-            <p>Stay informed about your account and community interactions</p>
-            <ul>
-                <li><a href="#">Notifications</a></li>
-                <li><a href="#">Mentions</a></li>
-                <li><a href="#">Comments on My Work</a></li>
-                <li><a href="#">System Alerts</a></li>
-            </ul>
-        </div>
-
-        <div>
-            <h2>Account Settings</h2>
-            <p>Manage your account and preferences</p>
-            <ul>
-                <li><a href="{% url 'accounts:password_change' user.pk %}">Change Password</a></li>
-                <li><a href="{% url 'accounts:profile_edit' user.pk %}">Edit Profile</a></li>
-                <li><a href="{% url 'accounts:account_edit' user.pk %}">Edit Account</a></li>
-                <li><a href="{% url 'accounts:delete_account' user.pk %}">Delete Account</a></li>
-                <li><a href="#">Privacy & Security</a></li>
-                {% if user.is_staff %}
-                    <li><a href="{% url 'admin:index' %}">Admin Panel</a></li>
-                {% endif %}
-            </ul>
-        </div>
-    </div>
-</section>
-
-<section>
-    <div>
-        <h2>Quick Stats</h2>
-        <div>
-            <div>
-                <h3>{{ post_count }}</h3>
-                <p>Posts</p>
-            </div>
-            <div>
-                <h3>{{ tutorial_count }}</h3>
-                <p>Tutorials</p>
-            </div>
-            <div>
-                <h3>{{ followers_count }}</h3>
-                <p>Followers</p>
-            </div>
-            <div>
-                <h3>{{ following_count }}</h3>
-                <p>Following</p>
-            </div>
-        </div>
-    </div>
-</section>
+</div>
 {% endblock %}

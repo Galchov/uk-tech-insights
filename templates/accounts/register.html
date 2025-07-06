@@ -1,30 +1,34 @@
 {% extends 'common/base.html' %}
+{% load widget_tweaks %}
 
 {% block title %}Register | UK Tech Insights{% endblock %}
 
 {% block content %}
-<h1>Register for UK Tech Insights</h1>
+<div class="mx-auto border p-4" style="max-width: 400px;">
+    <h2 class="text-center mb-4">Register for UK Tech Insights</h2>
 
-<form method="POST" action="{% url 'accounts:register' %}">
-    {% csrf_token %}
-    {% for field in form %}
-        <div>
-            <label for="{{ field.id_for_label }}">{{ field.label }}</label><br>
-            {{ field }}
+    <form method="POST" action="{% url 'accounts:register' %}">
+        {% csrf_token %}
 
-            {% if field.help_text %}
-                <small>{{ field.help_text }}</small><br>
-            {% endif %}
+        {% for field in form %}
+            <div class="mb-3 text-start">
+                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                {{ field|add_class:"form-control" }}
 
-            {% for error in field.errors %}
-                <div>{{ error }}</div>
-            {% endfor %}
+                {% for error in field.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <div class="d-grid mb-3">
+            <button type="submit" class="btn btn-primary">Register</button>
         </div>
-        <br>
-    {% endfor %}
 
-    <button type="submit">Register</button>
-</form>
-
-<p>Already have an account? <a href="{% url 'accounts:login' %}">Sign in here</a>.</p>
+        <div class="text-center">
+            <p class="mb-1">Already have an account?</p>
+            <a href="{% url 'accounts:login' %}" class="btn btn-outline-secondary">Sign In</a>
+        </div>
+    </form>
+</div>
 {% endblock %}

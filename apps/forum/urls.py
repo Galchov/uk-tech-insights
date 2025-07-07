@@ -16,4 +16,5 @@ urlpatterns = [
     path('post/<slug:slug>/close/', views.ClosePostView.as_view(), name="close_post"),
 
     path('categories/', views.CategoryListView.as_view(), name="category_list"),
+    path('categories/<slug:slug>/', views.CategoryPostListView.as_view(), name="category_posts"),
 ]

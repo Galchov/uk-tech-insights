@@ -3,33 +3,87 @@
 {% block title %}My Posts | UK Tech Insights{% endblock %}
 
 {% block forum_content %}
-<h2>My Posts</h2>
+<h2 class="text-center mb-4">My Posts</h2>
 
 {% for post in posts %}
-<div>
-    <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
-    <p>Category: {{ post.category }}</p>
-    <p>Views: {{ post.views }}</p>
-    <p>Published: {{ post.is_published }}</p>
+<div class="border p-3 mb-3 rounded">
+    <h4>
+        <a href="{{ post.get_absolute_url }}" class="text-decoration-none">
+            {{ post.title }}
+        </a>
+    </h4>
+    <p class="mb-1 text-muted small">
+        Category: {{ post.category }} &middot; {{ post.views }} views &middot;
+
+        {% if post.is_published %}
+            <span class="text-success">Published</span>
+        {% else %}
+            <span class="text-danger">Draft</span>
+        {% endif %}
+
+        &middot;
+
+        {% if post.is_pinned %}
+            <span class="text-success">Pinned</span>
+        {% else %}
+            <span class="text-warning">Not pinned</span>
+        {% endif %}
+
+        &middot;
+
+        {% if post.is_closed %}
+            <span class="text-danger">Closed</span>
+        {% else %}
+            <span class="text-success">Open</span>
+        {% endif %}
+    </p>
+    <p class="mb-0">{{ post.content|truncatewords:30 }}</p>
 </div>
-<hr>
 {% empty %}
-<p>You haven't created any posts yet.</p>
+<p class="text-center">You haven't created any posts yet.</p>
 {% endfor %}
 
 {% if is_paginated %}
-<div>
-    {% if page_obj.has_previous %}
-    <a href="?page=1">First</a>
-    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
-    {% endif %}
+<nav class="d-flex justify-content-center mt-4">
+    <ul class="pagination">
 
-    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1">First</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">First</span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link">Previous</span>
+            </li>
+        {% endif %}
 
-    {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}">Next</a>
-    <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
-    {% endif %}
-</div>
+        <li class="page-item disabled">
+            <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        </li>
+
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Next</span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link">Last</span>
+            </li>
+        {% endif %}
+
+    </ul>
+</nav>
 {% endif %}
 {% endblock %}

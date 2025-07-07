@@ -35,6 +35,24 @@ class CategoryListView(ListView):
     model = ForumCategory
     template_name = 'forum/category_list.html'
     context_object_name = 'categories'
+
+
+class CategoryPostListView(ListView):
+    model = ForumPost
+    template_name = 'forum/category_posts.html'
+    context_object_name = 'posts'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return ForumPost.objects.filter(
+            category__slug=self.kwargs['slug'],
+            is_published=True,
+        )
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category'] = get_object_or_404(ForumCategory, slug=self.kwargs['slug'])
+        return context
     
 
 ##### Restricted Views (Verified Users) #####
@@ -174,7 +192,7 @@ class PinPostView(PermissionRequiredMixin, View):
 
     def post(self, request, slug, *args, **kwargs):
         post = get_object_or_404(ForumPost, slug=slug)
-        post.is_pinned = True
+        post.is_pinned = not post.is_pinned
         post.save()
         return redirect(post.get_absolute_url())
 
@@ -185,7 +203,7 @@ class ClosePostView(PermissionRequiredMixin, View):
 
     def post(self, request, slug, *args, **kwargs):
         post = get_object_or_404(ForumPost, slug=slug)
-        post.is_closed = True
+        post.is_closed = not post.is_closed
         post.save()
         return redirect(post.get_absolute_url())
 

@@ -3,15 +3,18 @@
 {% block title %}Posts Categories | UK Tech Insights{% endblock %}
 
 {% block forum_content %}
-<h2>Categories</h2>
+<h2 class="text-center mb-4">Categories</h2>
 
 {% for category in categories %}
-<div>
-    <h3>{{ category.name }}</h3>
-    <p>{{ category.description }}</p>
+<div class="border p-3 mb-3 rounded">
+    <h4>
+        <a href="{% url 'forum:category_posts' category.slug %}" class="text-decoration-none">
+            {{ category.name }}
+        </a>
+    </h4>
+    <p class="mb-0 text-muted">{{ category.description }}</p>
 </div>
-<hr>
 {% empty %}
-<p>No categories available.</p>
+<p class="text-center">No categories available.</p>
 {% endfor %}
 {% endblock %}

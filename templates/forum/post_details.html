@@ -3,41 +3,82 @@
 {% block title %}Post Details | UK Tech Insights{% endblock %}
 
 {% block forum_content %}
-<h2>{{ post.title }}</h2>
-<p>Author: {{ post.author }}</p>
-<p>Content: {{ post.content }}</p>
-<p>Category: {{ post.category }}</p>
-<p>Views: {{ post.views }}</p>
+<div class="mx-auto border p-4" style="max-width: 800px;">
+    <h2 class="mb-3">{{ post.title }}</h2>
 
-{% if user.is_authenticated and perms.forum.change_forumpost %}
-    {% if user == post.author or perms.forum.can_edit_others_posts %}
-        <p>
-            <a href="{% url 'forum:post_edit' slug=post.slug %}">Edit</a> |
-            <a href="{% url 'forum:post_delete' slug=post.slug %}">Delete</a>
+    <p class="text-muted mb-1">
+        By {{ post.author }} &middot; Category: {{ post.category }} &middot; {{ post.views }} views
+    </p>
+
+    <p class="mb-4">{{ post.content|linebreaks }}</p>
+
+    <div class="mb-4">
+        <p class="mb-1">
+            Pinned:
+            {% if post.is_pinned %}
+                <span class="badge bg-success rounded-circle" style="width: 20px; height: 20px;">✓</span>
+            {% else %}
+                <span class="badge bg-danger rounded-circle" style="width: 20px; height: 20px;">✗</span>
+            {% endif %}
         </p>
-    {% endif %}
-{% endif %}
+        <p class="mb-1">
+            Published:
+            {% if post.is_published %}
+                <span class="badge bg-success rounded-circle" style="width: 20px; height: 20px;">✓</span>
+            {% else %}
+                <span class="badge bg-danger rounded-circle" style="width: 20px; height: 20px;">✗</span>
+            {% endif %}
+        </p>
+        <p class="mb-1">
+            Closed:
+            {% if post.is_closed %}
+                <span class="badge bg-success rounded-circle" style="width: 20px; height: 20px;">✓</span>
+            {% else %}
+                <span class="badge bg-danger rounded-circle" style="width: 20px; height: 20px;">✗</span>
+            {% endif %}
+        </p>
+    </div>
 
-{% if user.is_authenticated %}
-    {% if perms.forum.can_publish_posts and not post.is_published %}
-        <form action="{% url 'forum:publish_post' slug=post.slug %}" method="post">
-            {% csrf_token %}
-            <button type="submit">Publish</button>
-        </form>
+    {% if user.is_authenticated and perms.forum.change_forumpost %}
+        {% if user == post.author or perms.forum.can_edit_others_posts %}
+            <div class="mb-3">
+                <a href="{% url 'forum:post_edit' slug=post.slug %}" class="btn btn-outline-primary me-2">Edit</a>
+                <a href="{% url 'forum:post_delete' slug=post.slug %}" class="btn btn-outline-danger">Delete</a>
+            </div>
+        {% endif %}
     {% endif %}
 
-    {% if perms.forum.can_pin_posts and not post.is_pinned %}
-        <form action="{% url 'forum:pin_post' slug=post.slug %}" method="post">
-            {% csrf_token %}
-            <button type="submit">Pin</button>
-        </form>
-    {% endif %}
+    {% if user.is_authenticated %}
+        <div class="d-flex flex-wrap gap-2">
+            {% if perms.forum.can_publish_posts and not post.is_published %}
+                <form action="{% url 'forum:publish_post' slug=post.slug %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Publish</button>
+                </form>
+            {% endif %}
 
-    {% if perms.forum.can_close_posts and not post.is_closed %}
-        <form action="{% url 'forum:close_post' slug=post.slug %}" method="post">
-            {% csrf_token %}
-            <button type="submit">Close</button>
-        </form>
+            {% if perms.forum.can_pin_posts %}
+                <form action="{% url 'forum:pin_post' slug=post.slug %}" method="post">
+                    {% csrf_token %}
+                    {% if post.is_pinned %}
+                        <button type="submit" class="btn btn-outline-warning">Unpin</button>
+                    {% else %}
+                        <button type="submit" class="btn btn-warning">Pin</button>
+                    {% endif %}
+                </form>
+            {% endif %}
+
+            {% if perms.forum.can_close_posts %}
+                <form action="{% url 'forum:close_post' slug=post.slug %}" method="post">
+                    {% csrf_token %}
+                    {% if post.is_closed %}
+                        <button type="submit" class="btn btn-outline-secondary">Open</button>
+                    {% else %}
+                        <button type="submit" class="btn btn-secondary">Close</button>
+                    {% endif %}
+                </form>
+            {% endif %}
+        </div>
     {% endif %}
-{% endif %}
+</div>
 {% endblock %}

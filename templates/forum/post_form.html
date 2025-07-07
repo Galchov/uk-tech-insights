@@ -1,13 +1,39 @@
 {% extends 'forum/base_forum.html' %}
+{% load widget_tweaks %}
 
-{% block title %}Post Form | UK Tech Insights{% endblock %}
+{% block title %}{% if form.instance.pk %}Edit{% else %}Create{% endif %} Post | UK Tech Insights{% endblock %}
 
 {% block forum_content %}
-<h2>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Post</h2>
+<div class="mx-auto border p-4" style="max-width: 700px;">
+    <h2 class="text-center mb-4">
+        {% if form.instance.pk %}Edit{% else %}Create{% endif %} Post
+    </h2>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-</form>
+    <form method="post">
+        {% csrf_token %}
+
+        {% for field in form %}
+            {% if field.name == "title" or field.name == "content" or field.name == "category" %}
+                <div class="mb-3 text-start">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+
+                    {% if field.name == "content" %}
+                        {{ field|add_class:"form-control"|attr:"style:resize:none;" }}
+                    {% else %}
+                        {{ field|add_class:"form-control" }}
+                    {% endif %}
+
+                    {% for error in field.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary me-2">Save</button>
+            <a href="{% url 'forum:post_list' %}" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
 {% endblock %}

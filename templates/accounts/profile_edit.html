@@ -1,104 +1,143 @@
 {% extends 'common/base.html' %}
+{% load widget_tweaks %}
 
 {% block title %}Profile Edit | UK Tech Insights{% endblock %}
 
 {% block content %}
-<h2>Edit Profile</h2>
+<div class="mx-auto border p-4" style="max-width: 900px;">
+    <h2 class="text-center mb-4">Edit Profile</h2>
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
 
-    <div class="form-group">
-        <label for="{{ form.headline.id_for_label }}">Headline</label>
-        {{ form.headline }}
-        {{ form.headline.errors }}
-    </div>
+        <div class="row gx-5 gy-3">
+            <div class="col-12 col-md-6">
+                <div class="mb-3 text-start">
+                    <label for="{{ form.headline.id_for_label }}" class="form-label">Headline</label>
+                    {{ form.headline|add_class:"form-control" }}
+                    {% for error in form.headline.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
 
-    <div class="form-group">
-        <label for="{{ form.bio.id_for_label }}">Biography</label>
-        {{ form.bio }}
-        {{ form.bio.errors }}
-    </div>
+                <div class="mb-3 text-start">
+                    <label for="{{ form.date_of_birth.id_for_label }}" class="form-label">Date of Birth</label>
+                    {{ form.date_of_birth|add_class:"form-control" }}
+                    {% for error in form.date_of_birth.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
 
-    <div class="form-group">
-        <label for="{{ form.date_of_birth.id_for_label }}">Date of Birth</label>
-        {{ form.date_of_birth }}
-        {{ form.date_of_birth.errors }}
-    </div>
+                <div class="mb-3 text-start">
+                    <label for="{{ form.city.id_for_label }}" class="form-label">City</label>
+                    {{ form.city|add_class:"form-control" }}
+                    {% for error in form.city.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
 
-    <div class="form-group">
-        <label for="{{ form.city.id_for_label }}">City</label>
-        {{ form.city }}
-        {{ form.city.errors }}
-    </div>
+                <div class="mb-3 text-start">
+                    <label for="{{ form.country.id_for_label }}" class="form-label">Country</label>
+                    {{ form.country|add_class:"form-control" }}
+                    {% for error in form.country.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
 
-    <div class="form-group">
-        <label for="{{ form.country.id_for_label }}">Country</label>
-        {{ form.country }}
-        {{ form.country.errors }}
-    </div>
+                <div class="mb-3 text-start">
+                    <label for="{{ form.profile_picture.id_for_label }}" class="form-label">Profile Picture</label>
+                    {% if form.instance.profile_picture %}
+                        <div class="mb-2">
+                            <img src="{{ form.instance.profile_picture.url }}" alt="Current profile picture" style="max-height: 150px;">
+                        </div>
+                    {% endif %}
+                    {{ form.profile_picture|add_class:"form-control" }}
+                    {% for error in form.profile_picture.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
 
-    <div class="form-group">
-        <label for="{{ form.profile_picture.id_for_label }}">Profile Picture</label>
-        {% if form.instance.profile_picture %}
-            <div>
-                <img src="{{ form.instance.profile_picture.url }}" alt="Current profile picture" style="max-height: 150px;">
+                <div class="mb-3 text-start">
+                    <label for="{{ form.contact_email.id_for_label }}" class="form-label">Contact Email</label>
+                    {{ form.contact_email|add_class:"form-control" }}
+                    {% for error in form.contact_email.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3 text-start">
+                    <label for="{{ form.languages.id_for_label }}" class="form-label">Languages</label>
+                    {{ form.languages|add_class:"form-control" }}
+                    {% for error in form.languages.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
             </div>
-        {% endif %}
-        {{ form.profile_picture }}
-        {{ form.profile_picture.errors }}
-    </div>
 
-    <div class="form-group">
-        <label for="{{ form.personal_website.id_for_label }}">Personal Website</label>
-        {{ form.personal_website }}
-        {{ form.personal_website.errors }}
-    </div>
+            <div class="col-12 col-md-6">
+                <div class="mb-3 text-start">
+                    <label for="{{ form.bio.id_for_label }}" class="form-label">Biography</label>
+                    {{ form.bio|add_class:"form-control" }}
+                    {% for error in form.bio.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
 
-    <div class="form-group">
-        <label for="{{ form.linkedin.id_for_label }}">LinkedIn</label>
-        {{ form.linkedin }}
-        {{ form.linkedin.errors }}
-    </div>
+                <div class="mb-3 text-start">
+                    <label for="{{ form.personal_website.id_for_label }}" class="form-label">Personal Website</label>
+                    {{ form.personal_website|add_class:"form-control" }}
+                    {% for error in form.personal_website.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
 
-    <div class="form-group">
-        <label for="{{ form.twitter.id_for_label }}">Twitter</label>
-        {{ form.twitter }}
-        {{ form.twitter.errors }}
-    </div>
+                <div class="mb-3 text-start">
+                    <label for="{{ form.linkedin.id_for_label }}" class="form-label">LinkedIn</label>
+                    {{ form.linkedin|add_class:"form-control" }}
+                    {% for error in form.linkedin.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
 
-    <div class="form-group">
-        <label for="{{ form.github.id_for_label }}">GitHub</label>
-        {{ form.github }}
-        {{ form.github.errors }}
-    </div>
+                <div class="mb-3 text-start">
+                    <label for="{{ form.twitter.id_for_label }}" class="form-label">Twitter</label>
+                    {{ form.twitter|add_class:"form-control" }}
+                    {% for error in form.twitter.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
 
-    <div class="form-group">
-        <label for="{{ form.gitlab.id_for_label }}">GitLab</label>
-        {{ form.gitlab }}
-        {{ form.gitlab.errors }}
-    </div>
+                <div class="mb-3 text-start">
+                    <label for="{{ form.github.id_for_label }}" class="form-label">GitHub</label>
+                    {{ form.github|add_class:"form-control" }}
+                    {% for error in form.github.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
 
-    <div class="form-group">
-        <label for="{{ form.tech_stack.id_for_label }}">Tech Stack</label>
-        {{ form.tech_stack }}
-        {{ form.tech_stack.errors }}
-    </div>
+                <div class="mb-3 text-start">
+                    <label for="{{ form.gitlab.id_for_label }}" class="form-label">GitLab</label>
+                    {{ form.gitlab|add_class:"form-control" }}
+                    {% for error in form.gitlab.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
 
-    <div class="form-group">
-        <label for="{{ form.contact_email.id_for_label }}">Contact Email</label>
-        {{ form.contact_email }}
-        {{ form.contact_email.errors }}
-    </div>
+                <div class="mb-3 text-start">
+                    <label for="{{ form.tech_stack.id_for_label }}" class="form-label">Tech Stack</label>
+                    {{ form.tech_stack|add_class:"form-control" }}
+                    {% for error in form.tech_stack.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
 
-    <div class="form-group">
-        <label for="{{ form.languages.id_for_label }}">Languages</label>
-        {{ form.languages }}
-        {{ form.languages.errors }}
-    </div>
-
-    <button type="submit">Save Changes</button>
-    <a href="{% url 'accounts:dashboard' pk=request.user.pk %}">Cancel</a>
-</form>
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary me-2">Save Changes</button>
+            <a href="{% url 'accounts:dashboard' pk=request.user.pk %}" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
 {% endblock %}

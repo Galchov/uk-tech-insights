@@ -10,7 +10,7 @@ from .models import ForumPost, ForumCategory
 
 ##### Public Views #####
 
-class ForumPostListView(ListView):
+class PublishedPostListView(ListView):
     model = ForumPost
     template_name = 'forum/post_list.html'
     context_object_name = 'posts'
@@ -56,6 +56,19 @@ class CategoryPostListView(ListView):
     
 
 ##### Restricted Views (Verified Users) #####
+
+class UnpublishedPostListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = ForumPost
+    template_name = 'forum/post_list.html'
+    context_object_name = 'posts'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return ForumPost.objects.filter(is_published=False)
+    
+    def test_func(self):
+        return self.request.user.is_superuser or self.request.user.is_staff
+
 
 class ForumPostCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = ForumPost
@@ -181,7 +194,7 @@ class PublishPostView(PermissionRequiredMixin, View):
 
     def post(self, request, slug, *args, **kwargs):
         post = get_object_or_404(ForumPost, slug=slug)
-        post.is_published = True
+        post.is_published = not post.is_published
         post.save()
         return redirect(post.get_absolute_url())
 

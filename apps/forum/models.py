@@ -42,7 +42,7 @@ class ForumPost(models.Model):
     )
     is_published = models.BooleanField(
         _('published'),
-        default=True,
+        default=False,
     )
     is_pinned = models.BooleanField(
         _('pinned'),

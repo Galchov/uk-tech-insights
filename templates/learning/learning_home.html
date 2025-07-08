@@ -1,0 +1,30 @@
+{% extends 'common/base.html' %}
+
+{% block title %}Learning | UK Tech Insights{% endblock %}
+
+{% block content %}
+<div class="mx-auto" style="max-width: 1000px;">
+    <h1 class="text-center mb-4">{{ page_title }}</h1>
+    <p class="text-center mb-4">{{ page_description }}</p>
+
+    <div class="row text-center">
+        <div class="col-md-6">
+            <h2><a href="#">Tutorials</a></h2>
+            {% for tutorial in tutorials %}
+                {{ tutorial.title }}
+            {% empty %}
+                <p>No tutorials yet.</p>
+            {% endfor %}
+        </div>
+
+        <div class="col-md-6">
+            <h2><a href="#">Articles</a></h2>
+            {% for article in articles %}
+                {{ article.title }}
+            {% empty %}
+                <p>No articles yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock%}

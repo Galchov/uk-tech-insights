@@ -74,6 +74,10 @@ class BaseLearningContent(models.Model):
         _('updated at'),
         auto_now=True,
     )
+    views = models.PositiveIntegerField(
+        _('views'),
+        default=0,
+    )
     
     comments = GenericRelation(Comment)
     stars = GenericRelation(Star)

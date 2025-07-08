@@ -1,8 +1,10 @@
 from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
+from django.urls import reverse_lazy
 
 from .models import Article, Tutorial
+from .forms import TutorialForm
 
 
 class LearningHomeView(TemplateView):
@@ -57,8 +59,16 @@ class TutorialDetailView(DetailView):
         return context
 
 
-class TutorialCreateView(CreateView):
+class TutorialCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    model = Tutorial
+    form_class = TutorialForm
     template_name = 'learning/tutorial_form.html'
+    success_url = reverse_lazy('learning:tutorial_list')
+    permission_required = 'learning.add_tutorial'
+    
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
 
 
 class TutorialEditView(UpdateView):

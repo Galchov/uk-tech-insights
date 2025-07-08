@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import Permission
 
 from .models import CustomUser, Profile
 from .forms import CustomRegistrationForm, CustomUserChangeForm
@@ -68,3 +69,6 @@ class CustomUserAdmin(UserAdmin):
             return []
         
         return super().get_inline_instances(request, obj)
+
+
+admin.site.register(Permission)

@@ -1,0 +1,54 @@
+{% extends 'common/base.html' %}
+
+{% block content %}
+<h1>Create a New Tutorial</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {{ form.non_field_errors }}
+
+    <div>
+        <label for="{{ form.title.id_for_label }}">Title:</label>
+        {{ form.title }}
+        {{ form.title.errors }}
+    </div>
+
+    <div>
+        <label for="{{ form.cover_image.id_for_label }}">Cover Image:</label>
+        {{ form.cover_image }}
+        {{ form.cover_image.errors }}
+    </div>
+
+    <div>
+        <label for="{{ form.summary.id_for_label }}">Summary:</label>
+        {{ form.summary }}
+        {{ form.summary.errors }}
+    </div>
+
+    <div>
+        <label for="{{ form.content.id_for_label }}">Content:</label>
+        {{ form.content }}
+        {{ form.content.errors }}
+    </div>
+
+    <div>
+        <label for="{{ form.difficulty.id_for_label }}">Difficulty:</label>
+        {{ form.difficulty }}
+        {{ form.difficulty.errors }}
+    </div>
+
+    <div>
+        <label for="{{ form.estimated_hours.id_for_label }}">Estimated Hours:</label>
+        {{ form.estimated_hours }}
+        {{ form.estimated_hours.errors }}
+    </div>
+
+    <div>
+        <label for="{{ form.is_published.id_for_label }}">Publish:</label>
+        {{ form.is_published }}
+        {{ form.is_published.errors }}
+    </div>
+
+    <button type="submit">Create Tutorial</button>
+</form>
+{% endblock %}

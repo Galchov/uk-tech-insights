@@ -122,6 +122,10 @@ class Tutorial(BaseLearningContent):
             models.Index(fields=['slug']),
             models.Index(fields=['created_at']),
         ]
+        permissions = [
+            ('can_publish_tutorials', "Can publish tutorials"),
+            ('can_edit_others_tutorials', "Can edit others' tutorials"),
+        ]
 
     def get_absolute_url(self):
         return reverse('learning:tutorial_detail', kwargs={'slug': self.slug})

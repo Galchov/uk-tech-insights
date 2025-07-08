@@ -1,0 +1,78 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block title %}{{ article.title }} | Articles{% endblock %}
+
+{% block content %}
+<div class="container py-5 d-flex justify-content-center">
+
+    <div class="w-100" style="max-width: 800px;">
+        <h1 class="text-center mb-4">{{ article.title }}</h1>
+
+        {% if article.cover_image %}
+            <div class="text-center mb-3">
+                <img src="{{ article.cover_image.url }}" alt="{{ article.title }}" class="img-fluid rounded shadow-sm" style="max-height: 400px; object-fit: cover;">
+            </div>
+        {% endif %}
+
+        <p class="text-center text-muted">
+            {% if article.category %}
+                <strong>Category:</strong> {{ article.category.name }} |
+            {% endif %}
+            <strong>Created:</strong> {{ article.created_at|date:"F j, Y" }} |
+            <strong>by</strong>
+            {% for author in article.authors.all %}
+                {{ author.get_full_name|default:author.username }}{% if not forloop.last %}, {% endif %}
+            {% empty %}
+                Unknown
+            {% endfor %}
+        </p>
+
+        <div class="p-3 border rounded mb-4" style="background-color: rgba(0,0,0,0.02);">
+            <h5>Summary</h5>
+            <p>{{ article.summary }}</p>
+        </div>
+
+        <div class="p-3 border rounded mb-4" style="background-color: rgba(0,0,0,0.02);">
+            <h5>Content</h5>
+            <div>{{ article.content|linebreaks }}</div>
+        </div>
+
+        {% if tags %}
+            <div class="text-center mb-4">
+                <h5>Tags</h5>
+                <ul class="list-inline">
+                    {% for tag in tags %}
+                        <li class="list-inline-item">
+                            <span class="badge bg-primary">{{ tag }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <div class="text-center mb-4">
+            <h5>Ratings</h5>
+            <p>{{ stars_count }} stars so far ⭐</p>
+        </div>
+
+        <div class="mt-5">
+            <h4>Comments</h4>
+            {% if comments %}
+                <ul class="list-group mb-3">
+                    {% for comment in comments %}
+                        <li class="list-group-item">
+                            <strong>{{ comment.user.username }}</strong> on {{ comment.created_at|date:"M d, Y" }}<br>
+                            {{ comment.text|linebreaks }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No comments yet. Be the first to comment!</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

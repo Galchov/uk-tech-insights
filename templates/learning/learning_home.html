@@ -11,18 +11,20 @@
         <div class="col-md-6">
             <h2><a href="#">Tutorials</a></h2>
             {% for tutorial in tutorials %}
-                {{ tutorial.title }}
+                <div>
+                    {% include 'learning/_tutorial_card.html' with tutorial=tutorial %}
+                </div>
             {% empty %}
-                <p>No tutorials yet.</p>
+                <p>No tutorials available.</p>
             {% endfor %}
         </div>
 
         <div class="col-md-6">
             <h2><a href="#">Articles</a></h2>
             {% for article in articles %}
-                {{ article.title }}
+                {% include 'learning/_article_card.html' with article=article %}
             {% empty %}
-                <p>No articles yet.</p>
+                <p>No articles available.</p>
             {% endfor %}
         </div>
     </div>

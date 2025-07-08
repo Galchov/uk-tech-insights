@@ -1,8 +1,8 @@
-from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 
-from .models import Article, Tutorial, TutorialCompletion
+from .models import Article, Tutorial
 
 
 class LearningHomeView(TemplateView):
@@ -29,7 +29,32 @@ class TutorialListView(ListView):
     
 
 class TutorialDetailView(DetailView):
+    model = Tutorial
     template_name = 'learning/tutorial_detail.html'
+    context_object_name = 'tutorial'
+
+    def get_queryset(self):
+        return Tutorial.objects.filter(is_published=True)
+    
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        obj.views += 1
+        obj.save(update_fields=['views'])
+        return obj
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        tutorial = self.object
+
+        context['comments'] = tutorial.comments.all()
+        context['stars_count'] = tutorial.stars.count()
+        context['tags'] = tutorial.tags.all()
+        context['related_tutorials'] = Tutorial.objects.filter(
+            is_published=True,
+            difficulty=tutorial.difficulty,
+        ).exclude(pk=tutorial.pk)[:5]
+
+        return context
 
 
 class TutorialCreateView(CreateView):
@@ -60,7 +85,26 @@ class ArticleListView(ListView):
 
 
 class ArticleDetailView(DetailView):
+    model = Article
     template_name = 'learning/article_detail.html'
+    context_object_name = 'article'
+
+    def get_queryset(self):
+        return Article.objects.filter(is_published=True)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        article = self.object
+
+        context['comments'] = article.comments.all()
+        context['stars_count'] = article.stars.count()
+        context['tags'] = article.tags.all()
+        context['related_articles'] = Article.objects.filter(
+            is_published=True,
+            difficulty=article.difficulty,
+        ).exclude(pk=article.pk)[:5]
+
+        return context
 
 
 class ArticleCreateView(CreateView):

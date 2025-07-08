@@ -1,0 +1,12 @@
+{% extends 'common/base.html' %}
+
+{% block title %}Activation Failed | Your Site Name{% endblock %}
+
+{% block content %}
+<div class="mx-auto mt-5 text-center" style="max-width: 500px;">
+    <h2>Activation Failed</h2>
+    <p>Sorry, the activation link is invalid, expired, or already used.</p>
+    <p>Please try registering again or contact support if you need help.</p>
+    <a href="{% url 'accounts:register' %}" class="btn btn-primary mt-3">Register Again</a>
+</div>
+{% endblock %}

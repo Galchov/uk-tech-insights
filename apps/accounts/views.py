@@ -1,17 +1,30 @@
-from django.shortcuts import render, redirect
-from django.http import HttpRequest, HttpResponse
-from django.contrib.auth import views as auth_views
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.utils.html import strip_tags
+from django.core.mail import EmailMultiAlternatives
+from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth import views as auth_views, get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.contrib.auth import logout
+from django.contrib.auth.models import Group
 from django.urls import reverse_lazy, reverse
+from django.views import View
 from django.views.generic.edit import FormView
 from django.views.generic import TemplateView, UpdateView, DeleteView
+from django.template.loader import render_to_string
+from django.shortcuts import redirect
+from django.conf import settings
+
+from datetime import datetime
 
 from .forms import CustomRegistrationForm, CustomEmailAuthenticationForm, ProfileEditForm, AccountEditForm
 from .models import CustomUser, Profile
 
+
+User = get_user_model()
 
 ##### Authentication #####
 
@@ -41,13 +54,73 @@ class CustomRegisterView(SuccessMessageMixin, FormView):
     template_name = 'accounts/register.html'
     form_class = CustomRegistrationForm
     success_url = reverse_lazy('accounts:login')
-    success_message = "%(username)s, your account has successfully been created."
+    success_message = "%(username)s, your account has successfully been created. Please confirm your email before logging in."
     extra_context = {'hide_navbar': True}
 
     def form_valid(self, form):
-        form.save()
-        self.object = form.instance
+        user = form.save(commit=False)
+        user.is_active = False
+        user.save()
+
+        current_site = get_current_site(self.request)
+        domain = current_site.domain
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        activation_link = self.request.build_absolute_uri(
+            reverse('accounts:activate', kwargs={'uidb64': uid, 'token': token})
+        )
+
+        subject = f"Activate your account at {domain}"
+        from_email = settings.DEFAULT_FROM_EMAIL
+        html_content = render_to_string('accounts/account_activation_email.html', {
+            'user': user,
+            'activation_link': activation_link,
+            'current_year': datetime.now().year,
+        })
+        text_content = strip_tags(html_content)
+
+        email = EmailMultiAlternatives(
+            subject,
+            text_content,
+            from_email,
+            [user.email],
+        )
+        email.attach_alternative(
+            html_content,
+            'text/html',
+        )
+        email.send()
+
+        self.object = user
+
         return super().form_valid(form)
+    
+
+class ActivateUserView(View):
+    def get(self, request, uidb64, token, *args, **kwargs):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
+
+        if user and default_token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+        
+            regular_group, created = Group.objects.get_or_create(name='Regular User')
+            user.groups.add(regular_group)
+
+            messages.success(request, "Your account has been activated. You can now log in.")
+
+            return redirect(reverse('accounts:login'))
+        else:
+            return redirect(reverse('accounts:activation_failed'))
+        
+
+class ActivationFailedView(TemplateView):
+    template_name = 'accounts/activation_failed.html'
+    extra_context = {'hide_navbar': True}
 
 
 class CustomPasswordChangeView(LoginRequiredMixin, auth_views.PasswordChangeView):

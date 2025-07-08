@@ -9,6 +9,9 @@ urlpatterns = [
     path('logout/', views.CustomLogoutView.as_view(), name="logout"),
     path('register/', views.CustomRegisterView.as_view(), name="register"),
 
+    path('activate/<uidb64>/<token>/', views.ActivateUserView.as_view(), name="activate"),
+    path('activation-failed/', views.ActivationFailedView.as_view(), name='activation_failed'),
+
     path('password-reset/', views.CustomPasswordResetView.as_view(), name="password_reset"),
     path('password-reset/done/', views.CustomPasswordResetDoneView.as_view(), name="password_reset_done"),
     path('password-reset/confirm/<uidb64>/<token>/', views.CustomPasswordResetConfirmView.as_view(), name="password_reset_confirm"),

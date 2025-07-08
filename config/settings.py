@@ -166,3 +166,9 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/accounts/profile/'
 LOGOUT_REIDRECT_URL = '/login/'
+
+
+# Media settings
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

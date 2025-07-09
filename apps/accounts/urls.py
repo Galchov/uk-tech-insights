@@ -8,10 +8,14 @@ urlpatterns = [
     path('login/', views.CustomLoginView.as_view(), name="login"),
     path('logout/', views.CustomLogoutView.as_view(), name="logout"),
     path('register/', views.CustomRegisterView.as_view(), name="register"),
-    path('verification/', views.UserVerifictaionView.as_view(), name="user_verification"),
 
     path('activate/<uidb64>/<token>/', views.ActivateUserView.as_view(), name="activate"),
     path('activation-failed/', views.ActivationFailedView.as_view(), name='activation_failed'),
+
+    path('verification/request/', views.VerificationRequestView.as_view(), name='verification_request'),
+    path('verification/check/', views.VerificationCheckView.as_view(), name='verification_check'),
+    path('verification/success/', views.VerificationSuccessView.as_view(), name='verification_success'),
+    path('verification/failed/', views.VerificationFailedView.as_view(), name='verification_failed'),
 
     path('password-reset/', views.CustomPasswordResetView.as_view(), name="password_reset"),
     path('password-reset/done/', views.CustomPasswordResetDoneView.as_view(), name="password_reset_done"),

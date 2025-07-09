@@ -15,7 +15,7 @@ from django.views import View
 from django.views.generic.edit import FormView
 from django.views.generic import TemplateView, UpdateView, DeleteView
 from django.template.loader import render_to_string
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.conf import settings
 
 from datetime import datetime
@@ -225,5 +225,52 @@ class AccountDeleteView(LoginRequiredMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-class UserVerifictaionView(TemplateView):
-    template_name = 'accounts/user_verification.html'
+##### User Verification / User becomes a creator #####
+
+class VerificationRequestView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'accounts/verification_request.html')
+    
+    def post(self, request):
+        return redirect('accounts:verification_check.html')
+
+
+class VerificationCheckView(LoginRequiredMixin, View):
+    def post(self, request):
+        user = request.user
+        missing = []
+
+        if not user.profile.linkedin:
+            missing.append("LinkedIn profile link")
+        if not user.profile.github:
+            missing.append("GitHub profile link")
+        
+        if not missing:
+            user.is_verified = True
+            user.save()
+
+            verified_group, create = Group.objects.get_or_create(name="Verified User")
+            user.groups.add(verified_group)
+
+            return redirect('accounts:verification_success')
+        else:
+            return redirect('accounts:verification_failed')
+
+
+class VerificationSuccessView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'accounts/verification_success.html')
+
+
+class VerificationFailedView(LoginRequiredMixin, View):
+    def get(self, request):
+        user = request.user
+        missing = []
+
+        if not user.profile.github:
+            missing.append('GitHub profile link')
+        if not user.profile.linkedin:
+            missing.append('LinkedIn profile link')
+
+        context = {'missing': missing}
+        return render(request, 'accounts/verification_failed.html', context)

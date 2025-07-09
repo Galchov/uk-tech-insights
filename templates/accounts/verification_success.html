@@ -1,0 +1,7 @@
+{% extends 'common/base.html' %}
+
+{% block content %}
+<h2>Verification Successful ✅</h2>
+<p>You are now verified and can create content!</p>
+<a href="{% url 'learning:tutorial_create' %}">Create a tutorial</a>
+{% endblock %}

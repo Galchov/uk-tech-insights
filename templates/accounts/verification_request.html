@@ -1,0 +1,10 @@
+{% extends 'common/base.html' %}
+
+{% block content %}
+<h2>Verification Required</h2>
+<p>To create content, you need to be verified. Please make sure you have added your GitHub and LinkedIn profile links in your account.</p>
+<form method="post" action="{% url 'accounts:verification_check' %}">
+  {% csrf_token %}
+  <button type="submit">Request Verification</button>
+</form>
+{% endblock %}

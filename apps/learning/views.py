@@ -78,7 +78,7 @@ class TutorialCreateView(PermissionRequiredMixin, CreateView):
             return redirect(self.get_login_url())
         
         # User logged in but lacking permission -> redirect to verification
-        return redirect('accounts:user_verification')
+        return redirect('accounts:verification_request')
     
     def form_valid(self, form):
         form.instance.author = self.request.user

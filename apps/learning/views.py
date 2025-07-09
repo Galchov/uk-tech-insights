@@ -2,6 +2,7 @@ from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.urls import reverse_lazy
+from django.shortcuts import redirect
 
 from .models import Article, Tutorial
 from .forms import TutorialForm
@@ -59,12 +60,25 @@ class TutorialDetailView(DetailView):
         return context
 
 
-class TutorialCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+class TutorialCreateView(PermissionRequiredMixin, CreateView):
     model = Tutorial
     form_class = TutorialForm
     template_name = 'learning/tutorial_form.html'
     success_url = reverse_lazy('learning:tutorial_list')
     permission_required = 'learning.add_tutorial'
+
+    # Change this to True if you want to raise 403 instead of redirecting
+    raise_exception = False
+    login_url = reverse_lazy('accounts:login')
+
+    def handle_no_permission(self):
+
+        # User not logged in -> redirect to login, if tried to access via URL
+        if not self.request.user.is_authenticated:
+            return redirect(self.get_login_url())
+        
+        # User logged in but lacking permission -> redirect to verification
+        return redirect('accounts:user_verification')
     
     def form_valid(self, form):
         form.instance.author = self.request.user

@@ -223,3 +223,7 @@ class AccountDeleteView(LoginRequiredMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         logout(request)
         return super().delete(request, *args, **kwargs)
+
+
+class UserVerifictaionView(TemplateView):
+    template_name = 'accounts/user_verification.html'

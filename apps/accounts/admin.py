@@ -28,7 +28,7 @@ class CustomUserAdmin(UserAdmin):
         (
             None,
             {
-                "fields": ['email', 'username', 'password'],
+                "fields": ['email', 'username', 'password', 'is_verified'],
             },
         ),
         (

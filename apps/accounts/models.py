@@ -13,10 +13,10 @@ class CustomUser(AbstractUser):
         unique=True,
         help_text=_('Enter a valid email address. This will be used to log in.'),
     )
-    email_verified = models.BooleanField(
-        _('email verified'),
+    is_verified = models.BooleanField(
+        _('user verified'),
         default=False,
-        help_text=_('Indicates whether the user has verified their email address.'),
+        help_text=_('Indicates whether the user is verified. Required for user to create content.'),
     )
 
     USERNAME_FIELD = 'email'

@@ -1,0 +1,40 @@
+<div class="border p-3 mb-3 rounded">
+    <h4>
+        <a href="{{ post.get_absolute_url }}" class="text-decoration-none">
+            {{ post.title }}
+        </a>
+    </h4>
+
+    <p class="mb-1">
+        {% if post.is_published %}
+            <span class="badge bg-success">Published</span>
+        {% else %}
+            <span class="badge bg-danger">Draft</span>
+        {% endif %}
+
+        {% if post.is_pinned %}
+            <span class="badge bg-success">Pinned</span>
+        {% else %}
+            <span class="badge bg-warning text-dark">Not Pinned</span>
+        {% endif %}
+
+        {% if post.is_closed %}
+            <span class="badge bg-danger">Closed</span>
+        {% else %}
+            <span class="badge bg-success">Open</span>
+        {% endif %}
+    </p>
+
+    <p class="mb-1 text-muted small">
+        By {{ post.author }}
+        &middot; {{ post.views }} views
+        &middot; {{ post.stars.count }} stars
+        &middot; {{ post.comments.count }} comments
+        &middot; Created: {{ post.created_at|date:"Y-m-d H:i" }}
+        &middot; Updated: {{ post.updated_at|date:"Y-m-d H:i" }}
+    </p>
+
+    <div class="text-truncate" style="max-width: 100%;">
+        {{ post.content }}
+    </div>
+</div>

@@ -6,39 +6,7 @@
 <h2 class="text-center mb-4">My Posts</h2>
 
 {% for post in posts %}
-<div class="border p-3 mb-3 rounded">
-    <h4>
-        <a href="{{ post.get_absolute_url }}" class="text-decoration-none">
-            {{ post.title }}
-        </a>
-    </h4>
-    <p class="mb-1 text-muted small">
-        Category: {{ post.category }} &middot; {{ post.views }} views &middot;
-
-        {% if post.is_published %}
-            <span class="text-success">Published</span>
-        {% else %}
-            <span class="text-danger">Draft</span>
-        {% endif %}
-
-        &middot;
-
-        {% if post.is_pinned %}
-            <span class="text-success">Pinned</span>
-        {% else %}
-            <span class="text-warning">Not pinned</span>
-        {% endif %}
-
-        &middot;
-
-        {% if post.is_closed %}
-            <span class="text-danger">Closed</span>
-        {% else %}
-            <span class="text-success">Open</span>
-        {% endif %}
-    </p>
-    <p class="mb-0">{{ post.content|truncatewords:30 }}</p>
-</div>
+    {% include 'forum/_post_card.html' with post=post %}
 {% empty %}
 <p class="text-center">You haven't created any posts yet.</p>
 {% endfor %}

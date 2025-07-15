@@ -1,4 +1,4 @@
-from django.urls import include, path
+from django.urls import path
 from . import views
 
 
@@ -23,8 +23,8 @@ urlpatterns = [
     path('password-reset/complete/', views.CustomPasswordResetCompleteView.as_view(), name="password_reset_complete"),
 
     path('profile/<int:pk>/', views.CustomDashboardView.as_view(), name="dashboard"),
-    path('profile/<int:pk>/profile_edit/', views.ProfileEditView.as_view(), name="profile_edit"),
-    path('profile/<int:pk>/account_edit/', views.AccountEditView.as_view(), name="account_edit"),
+    path('profile/<int:pk>/profile-edit/', views.ProfileEditView.as_view(), name="profile_edit"),
+    path('profile/<int:pk>/account-edit/', views.AccountEditView.as_view(), name="account_edit"),
     path('profile/<int:pk>/password-change/', views.CustomPasswordChangeView.as_view(), name="password_change"),
     path('profile/<int:pk>/password-change-done/', views.CustomPasswordChangeDoneView.as_view(), name="password_change_done"),
     path('profile/<int:pk>/delete-account/', views.AccountDeleteView.as_view(), name="delete_account"),

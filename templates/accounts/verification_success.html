@@ -1,7 +1,14 @@
 {% extends 'common/base.html' %}
 
+{% block title %}Verification Successful | UK Tech Insights{% endblock %}
+
 {% block content %}
-<h2>Verification Successful ✅</h2>
-<p>You are now verified and can create content!</p>
-<a href="{% url 'learning:tutorial_create' %}">Create a tutorial</a>
+<div class="mx-auto border p-4" style="max-width: 500px;">
+    <h2 class="text-center mb-3">Verification Successful ✅</h2>
+    <p class="text-center">You are now verified and can create content!</p>
+
+    <div class="text-center mt-4">
+        <a href="{% url 'accounts:dashboard' pk=request.user.pk %}" class="btn btn-outline-secondary ms-2">Back to Dashboard</a>
+    </div>
+</div>
 {% endblock %}

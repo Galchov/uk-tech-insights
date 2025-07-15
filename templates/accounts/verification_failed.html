@@ -1,13 +1,23 @@
 {% extends 'common/base.html' %}
 
+{% block title %}Verification Failed | UK Tech Insights{% endblock %}
+
 {% block content %}
-<h2>Verification Failed ❌</h2>
-<p>You are missing the following requirements:</p>
-<ul>
-  {% for item in missing %}
-    <li>{{ item }}</li>
-  {% endfor %}
-</ul>
-<p>Please update your profile with the missing information and try again.</p>
-<a href="{% url 'accounts:profile_edit' user.pk %}">Update Profile</a>
+<div class="mx-auto border p-4" style="max-width: 500px;">
+    <h2 class="text-center mb-3">Verification Failed ❌</h2>
+    <p class="text-center">You are missing the following requirements:</p>
+    
+    <ul class="text-start">
+        {% for item in missing %}
+            <li>{{ item }}</li>
+        {% endfor %}
+    </ul>
+
+    <p class="text-center">Please update your profile with the missing information and try again.</p>
+
+    <div class="text-center mt-4">
+        <a href="{% url 'accounts:profile_edit' user.pk %}" class="btn btn-primary">Update Profile</a>
+        <a href="{% url 'accounts:dashboard' pk=request.user.pk %}" class="btn btn-outline-secondary ms-2">Back to Dashboard</a>
+    </div>
+</div>
 {% endblock %}

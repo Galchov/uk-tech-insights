@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 
 from .models import ForumPost, ForumCategory
+from apps.common.forms import CommentForm
 
 
 ##### Public Views #####
@@ -24,6 +25,12 @@ class ForumPostDetailView(DetailView):
     model = ForumPost
     template_name = 'forum/post_details.html'
     context_object_name = 'post'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comments'] = self.object.comments.all().order_by('created_at')
+        context['comment_form'] = CommentForm()
+        return context
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)

@@ -5,5 +5,6 @@ from . import views
 app_name = 'common'
 
 urlpatterns = [
-    path('', views.home_page_view, name="home"),
+    path('', views.HomePageView.as_view(), name="home"),
+    path('<str:model>/<slug:slug>/comment/', views.AddCommentView.as_view(), name='add_comment'),
 ]

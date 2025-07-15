@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 
@@ -15,7 +15,9 @@ urlpatterns = [
     path('post/<slug:slug>/publish/', views.PublishPostView.as_view(), name="publish_post"),
     path('post/<slug:slug>/pin/', views.PinPostView.as_view(), name="pin_post"),
     path('post/<slug:slug>/close/', views.ClosePostView.as_view(), name="close_post"),
-
+    
     path('categories/', views.CategoryListView.as_view(), name="category_list"),
     path('categories/<slug:slug>/', views.CategoryPostListView.as_view(), name="category_posts"),
+
+    path('posts/', include('apps.common.urls')),
 ]

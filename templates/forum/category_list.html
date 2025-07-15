@@ -5,16 +5,17 @@
 {% block forum_content %}
 <h2 class="text-center mb-4">Categories</h2>
 
-{% for category in categories %}
-<div class="border p-3 mb-3 rounded">
-    <h4>
-        <a href="{% url 'forum:category_posts' category.slug %}" class="text-decoration-none">
-            {{ category.name }}
-        </a>
-    </h4>
-    <p class="mb-0 text-muted">{{ category.description }}</p>
-</div>
-{% empty %}
-<p class="text-center">No categories available.</p>
-{% endfor %}
+{% if categories %}
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        {% for category in categories %}
+            <div class="col">
+                <a href="{% url 'forum:category_posts' category.slug %}" class="d-block text-decoration-underline fw-semibold fs-4">
+                    {{ category.name }}
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="text-center">No categories available.</p>
+{% endif %}
 {% endblock %}

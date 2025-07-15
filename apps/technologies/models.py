@@ -22,7 +22,12 @@ class Technology(models.Model):
         upload_to='technology_logos/',
         blank=True,
         null=True,
-        height_field=_("Upload the logo of the technology."),
+        height_field='logo_height',
+    )
+    logo_height = models.IntegerField(
+        editable=False,
+        blank=True,
+        null=True,
     )
     created_at = models.DateTimeField(
         auto_now_add=True,

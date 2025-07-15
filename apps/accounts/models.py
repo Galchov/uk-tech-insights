@@ -47,7 +47,8 @@ class Profile(models.Model):
     bio = models.TextField(
         _('biography'),
         blank=True,
-        help_text=_('Optional: Write a short bio to display on your profile.'),
+        null=True,
+        help_text=_('Write a short bio to display on your profile. Required for verification (min 200 chars).'),
     )
     date_of_birth = models.DateField(
         _('date of birth'),
@@ -91,7 +92,7 @@ class Profile(models.Model):
         _('Twitter'),
         blank=True,
         null=True,
-        help_text=_("Optional: You Twitter profile.")
+        help_text=_("Optional: You Twitter profile."),
     )
     github = models.URLField(
         _('GitHub'),

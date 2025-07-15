@@ -19,22 +19,29 @@
 
         <div class="col-12 col-lg-6">
             <div class="border p-4 h-100">
-                <h2>My Work</h2>
-                <p>Access and manage your contributions</p>
-                <ul class="list-unstyled">
-                    <li><a href="#">My Posts</a></li>
-                    <li><a href="#">My Tutorials</a></li>
-                    <li><a href="#">Linked Content</a></li>
-                    <li><a href="#">Bookmarked Items</a></li>
-                    <li><a href="#">Drafts</a></li>
-                </ul>
+                <h2 class="text-center mb-3">My Work</h2>
+                {% if user.is_verified %}
+                    <p class="text-center">Access and manage your contributions</p>
+                    <ul class="list-unstyled">
+                        <li><a href="#">My Posts</a></li>
+                        <li><a href="#">My Tutorials</a></li>
+                        <li><a href="#">Linked Content</a></li>
+                        <li><a href="#">Bookmarked Items</a></li>
+                        <li><a href="#">Drafts</a></li>
+                    </ul>
+                {% else %}
+                    <p class="text-danger text-center">You must be verified to create or manage content.</p>
+                    <div class="text-center">
+                        <a href="{% url 'accounts:verification_request' %}" class="btn btn-primary mt-2">Verify your account</a>
+                    </div>
+                {% endif %}
             </div>
         </div>
 
         <div class="col-12 col-lg-6">
             <div class="border p-4 h-100">
-                <h2>Connections</h2>
-                <p>Grow and engage with your network</p>
+                <h2 class="text-center">Connections</h2>
+                <p class="text-center">Grow and engage with your network</p>
                 <ul class="list-unstyled">
                     <li><a href="#">Followers (0)</a></li>
                     <li><a href="#">Following (0)</a></li>
@@ -46,8 +53,8 @@
 
         <div class="col-12 col-lg-6">
             <div class="border p-4 h-100">
-                <h2>Recent Activity</h2>
-                <p>Stay informed about your account and community interactions</p>
+                <h2 class="text-center">Recent Activity</h2>
+                <p class="text-center">Stay informed about your account and community interactions</p>
                 <ul class="list-unstyled">
                     <li><a href="#">Notifications</a></li>
                     <li><a href="#">Mentions</a></li>
@@ -59,8 +66,8 @@
 
         <div class="col-12 col-lg-6">
             <div class="border p-4 h-100">
-                <h2>Account Settings</h2>
-                <p>Manage your account and preferences</p>
+                <h2 class="text-center">Account Settings</h2>
+                <p class="text-center">Manage your account and preferences</p>
                 <ul class="list-unstyled">
                     <li><a href="{% url 'accounts:password_change' user.pk %}">Change Password</a></li>
                     <li><a href="{% url 'accounts:profile_edit' user.pk %}">Edit Profile</a></li>

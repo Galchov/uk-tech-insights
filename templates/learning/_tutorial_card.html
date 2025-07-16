@@ -1,45 +1,37 @@
-<div class="card mb-5" style="max-width: 100%; min-height: 300px;">
-  <div class="card-body d-flex flex-column h-100">
+<div class="d-flex py-3 border-bottom">
 
-    <div class="d-flex align-items-start mb-2 flex-shrink-0" style="min-height: 120px;">
-      {% if tutorial.cover_image %}
-        <div class="me-3" style="flex-shrink: 0;">
-          <img src="{{ tutorial.cover_image.url }}"
-               alt="{{ tutorial.title }}"
-               class="rounded shadow-sm"
-               style="width: 100px; height: 100px; object-fit: cover;">
-        </div>
-      {% endif %}
-
-      <div class="d-flex flex-column" style="flex-grow: 1;">
-        <div style="overflow: hidden;">
-          <h4 class="card-title mb-1" style="white-space: normal; overflow: hidden;">
-            {{ tutorial.title }}
-          </h4>
-        </div>
-
-        <div style="overflow: hidden;">
-          <p class="card-text mb-0 small text-muted">
-            {% for author in tutorial.authors.all %}
-              {{ author.get_full_name|default:author.username }}{% if not forloop.last %}, {% endif %}
-            {% empty %}
-              Unknown
-            {% endfor %}
-            • {{ tutorial.created_at|date:"M d, Y" }}
-          </p>
-        </div>
-      </div>
+  {% if tutorial.cover_image %}
+    <div class="flex-shrink-0 me-3 d-flex align-items-center" style="width: 120px; height: 120px;">
+      <img src="{{ tutorial.cover_image.url }}"
+           alt="{{ tutorial.title }}"
+           class="rounded shadow-sm"
+           style="width: 100%; height: 100%; object-fit: cover;">
     </div>
+  {% endif %}
 
-    <div class="flex-grow-1 overflow-hidden" style="max-height: 90px;">
-      <p class="card-text">
-        {{ tutorial.summary }}
-      </p>
-    </div>
+  <div class="flex-grow-1 d-flex flex-column justify-content-center">
 
-    <div class="mt-auto flex-shrink-0">
-      <a href="{{ tutorial.get_absolute_url }}" class="btn btn-primary btn-sm">Read more</a>
-    </div>
+    <h5 class="mb-1">
+      <a href="{{ tutorial.get_absolute_url }}" class="text-decoration-none text-dark fw-bold">
+        {{ tutorial.title }}
+      </a>
+    </h5>
+
+    <p class="mb-1 text-muted small">
+      {{ tutorial.created_at|date:"Y-m-d" }}
+      •
+      <span class="badge bg-secondary">{{ tutorial.get_difficulty_display }}</span>
+    </p>
+
+    <p class="mb-0 text-muted" style="
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3; /* number of lines to show before cutting */
+      -webkit-box-orient: vertical;
+      ">
+      {{ tutorial.summary }}
+    </p>
 
   </div>
 </div>

@@ -2,9 +2,10 @@ from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.urls import reverse_lazy
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
+from django.core.exceptions import PermissionDenied
 
-from .models import Article, Tutorial
+from .models import Article, Tutorial, TutorialCompletion
 from .forms import TutorialForm
 
 
@@ -35,14 +36,21 @@ class TutorialDetailView(DetailView):
     model = Tutorial
     template_name = 'learning/tutorial_detail.html'
     context_object_name = 'tutorial'
-
-    def get_queryset(self):
-        return Tutorial.objects.filter(is_published=True)
     
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
-        obj.views += 1
-        obj.save(update_fields=['views'])
+
+        user = self.request.user
+        if not obj.is_published:
+            if not user.is_authenticated:
+                raise PermissionDenied("This tutorial is not published yet.")
+            if not (user.is_staff or user.is_superuser or obj.authors.filter(pk=user.pk).exists()):
+                raise PermissionDenied("You do not have permission to view this unpublished tutorial.")
+            
+        if obj.is_published:
+            obj.views += 1
+            obj.save(update_fields=['views'])
+
         return obj
 
     def get_context_data(self, **kwargs):
@@ -52,10 +60,15 @@ class TutorialDetailView(DetailView):
         context['comments'] = tutorial.comments.all()
         context['stars_count'] = tutorial.stars.count()
         context['tags'] = tutorial.tags.all()
+
         context['related_tutorials'] = Tutorial.objects.filter(
             is_published=True,
             difficulty=tutorial.difficulty,
         ).exclude(pk=tutorial.pk)[:5]
+
+        context['is_author'] = False
+        if self.request.user.is_authenticated:
+            context['is_author'] = tutorial.authors.filter(pk=self.request.user.pk).exists()
 
         return context
 
@@ -81,20 +94,67 @@ class TutorialCreateView(PermissionRequiredMixin, CreateView):
         return redirect('accounts:verification_request')
     
     def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        self.object.authors.add(self.request.user)
+        return response
 
 
-class TutorialEditView(UpdateView):
+class TutorialEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Tutorial
+    form_class = TutorialForm
     template_name = 'learning/tutorial_form.html'
+    success_url = reverse_lazy('learning:tutorial_list')
+
+    def test_func(self):
+        tutorial = self.get_object()
+        user = self.request.user
+
+        return (
+            tutorial.authors.filter(pk=user.pk).exists() or
+            user.has_perm('learning.can_edit_others_tutorials')
+        )
 
 
-class TutorialDeleteView(DeleteView):
+class TutorialDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Tutorial
     template_name = 'learning/tutorial_confirm_delete.html'
+    success_url = reverse_lazy('learning:tutorial_list')
+
+    def test_func(self):
+        tutorial = self.get_object()
+        user = self.request.user
+
+        return (
+            tutorial.authors.filter(pk=user.pk).exists() or
+            user.has_perm('learning.can_edit_others_tutorials')
+        )
 
 
-class TutorialCompleteView(View):
-    pass
+class TutorialCompleteView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        tutorial = get_object_or_404(Tutorial, slug=kwargs.get('slug'))
+        TutorialCompletion.objects.get_or_create(user=request.user, tutorial=tutorial)
+
+        return redirect(tutorial.get_absolute_url())
+    
+
+class TutorialTogglePublishView(LoginRequiredMixin, UserPassesTestMixin, View):
+    def test_func(self):
+        tutorial = get_object_or_404(Tutorial, slug=self.kwargs['slug'])
+        user = self.request.user
+        return (
+            user.is_staff or
+            user.is_superuser or
+            tutorial.authors.filter(pk=user.pk).exists()
+        )
+
+    def post(self, request, *args, **kwargs):
+        tutorial = get_object_or_404(Tutorial, slug=kwargs['slug'])
+
+        tutorial.is_published = not tutorial.is_published
+        tutorial.save(update_fields=['is_published'])
+
+        return redirect(tutorial.get_absolute_url())
 
 
 ##### Article Views #####

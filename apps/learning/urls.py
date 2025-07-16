@@ -13,6 +13,7 @@ urlpatterns = [
     path('tutorials/<slug:slug>/edit/', views.TutorialEditView.as_view(), name="tutorial_edit"),
     path('tutorials/<slug:slug>/delete/', views.TutorialDeleteView.as_view(), name="tutorial_delete"),
     path('tutorials/<slug:slug>/complete/', views.TutorialCompleteView.as_view(), name="tutorial_complete"),
+    path('tutorials/<slug:slug>/toggle-publish/', views.TutorialTogglePublishView.as_view(), name='tutorial_toggle_publish'),
 
     path('articles/', views.ArticleListView.as_view(), name="article_list"),
     path('articles/create/', views.ArticleCreateView.as_view(), name="article_create"),

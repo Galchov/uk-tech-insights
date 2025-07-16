@@ -1,0 +1,87 @@
+{% extends 'common/base.html' %}
+
+{% block content %}
+<h1 class="mb-4 text-center">Tutorials</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        {% for tutorial in tutorials %}
+            <div class="mb-4">
+                {% include 'learning/_tutorial_card.html' with tutorial=tutorial %}
+            </div>
+        {% empty %}
+            <p>No tutorials available.</p>
+        {% endfor %}
+
+        <nav aria-label="Tutorial pagination">
+            <ul class="pagination justify-content-center">
+                {% if tutorials.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ tutorials.previous_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}" aria-label="Previous">
+                            &laquo;
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                {% endif %}
+
+                {% for num in tutorials.paginator.page_range %}
+                    {% if tutorials.number == num %}
+                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if tutorials.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ tutorials.next_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}" aria-label="Next">
+                            &raquo;
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card p-3">
+            <h5>Sort & Filter</h5>
+
+            <div class="mb-3">
+                <label class="form-label">Category</label>
+                <select class="form-select" onchange="location = this.value;">
+                    <option value="?category=all">All</option>
+                    <option value="?category=backend">Back-end</option>
+                    <option value="?category=frontend">Front-end</option>
+                    <option value="?category=data-science">Data Science</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Skill Level</label>
+                <select class="form-select" onchange="location = this.value;">
+                    <option value="?skill=all">All levels</option>
+                    <option value="?skill=beginner">Beginner</option>
+                    <option value="?skill=intermediate">Intermediate</option>
+                    <option value="?skill=advanced">Advanced</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Status</label>
+                <select class="form-select" onchange="location = this.value;">
+                    <option value="?status=all">All statuses</option>
+                    <option value="?status=completed">Completed</option>
+                    <option value="?status=in-progress">In-progress</option>
+                    <option value="?status=bookmarked">Bookmarked</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

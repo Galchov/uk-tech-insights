@@ -16,6 +16,28 @@
             </div>
         {% endif %}
 
+        {% if user.is_authenticated %}
+            <div class="d-flex justify-content-center mb-4 gap-2">
+                {% if user.is_staff or user.is_superuser %}
+                    <a href="{% url 'learning:tutorial_edit' slug=tutorial.slug %}" class="btn btn-outline-primary btn-sm">Edit</a>
+                    <a href="{% url 'learning:tutorial_delete' slug=tutorial.slug %}" class="btn btn-outline-danger btn-sm">Delete</a>
+
+                    <form method="post" action="{% url 'learning:tutorial_toggle_publish' slug=tutorial.slug %}" style="display: inline;">
+                        {% csrf_token %}
+                        {% if tutorial.is_published %}
+                            <button type="submit" class="btn btn-outline-warning btn-sm">Unpublish</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-outline-success btn-sm">Publish</button>
+                        {% endif %}
+                    </form>
+
+                {% elif is_author %}
+                    <a href="{% url 'learning:tutorial_edit' slug=tutorial.slug %}" class="btn btn-outline-primary btn-sm">Edit</a>
+                    <a href="{% url 'learning:tutorial_delete' slug=tutorial.slug %}" class="btn btn-outline-danger btn-sm">Delete</a>
+                {% endif %}
+            </div>
+        {% endif %}
+
         <p class="text-center text-muted">
             <strong>Difficulty:</strong> {{ tutorial.get_difficulty_display }} |
             {% if tutorial.estimated_duration %}<strong>Estimated:</strong> {{ tutorial.estimated_duration }} min{% endif %} |

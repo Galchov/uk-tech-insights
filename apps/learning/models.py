@@ -114,6 +114,12 @@ class BaseLearningContent(models.Model):
 
 
 class Tutorial(BaseLearningContent):
+    categories = models.ManyToManyField(
+        'Category',
+        blank=True,
+        related_name='tutorials',
+    )
+
     class Meta:
         verbose_name = _('tutorial')
         verbose_name_plural = _('tutorials')
@@ -154,6 +160,12 @@ class TutorialCompletion(models.Model):
     
 
 class Article(BaseLearningContent):
+    categories = models.ManyToManyField(
+        'Category',
+        blank=True,
+        related_name='articles',
+    )
+    
     class Meta:
         verbose_name = _('article')
         verbose_name_plural = _('articles')
@@ -165,3 +177,39 @@ class Article(BaseLearningContent):
 
     def get_absolute_url(self):
         return reverse('learning:article_detail', kwargs={'slug': self.slug})
+
+
+class Category(models.Model):
+    name = models.CharField(
+        _('name'),
+        max_length=100,
+        unique=True,
+    )
+    slug = models.SlugField(
+        _('slug'),
+        max_length=200,
+        unique=True,
+        blank=True,
+    )
+
+    class Meta:
+        verbose_name = _('category')
+        verbose_name_plural = _('categories')
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.name)
+            unique_slug = base_slug
+            counter = 1
+
+            while Category.objects.filter(slug=unique_slug).exists():
+                unique_slug = f"{base_slug}-{counter}"
+                counter += 1
+            
+            self.slug = unique_slug
+        
+        super().save(*args, **kwargs)

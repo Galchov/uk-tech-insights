@@ -137,27 +137,42 @@ class Tutorial(BaseLearningContent):
         return reverse('learning:tutorial_detail', kwargs={'slug': self.slug})
 
 
-class TutorialCompletion(models.Model):
+class TutorialProgress(models.Model):
+    class StatusChoices(models.TextChoices):
+        NOT_STARTED = 'not-started', _('Not Started')
+        IN_PROGRESS = 'in-progress', _('In Progress')
+        COMPLETED = 'completed', _('Completed')
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
+        related_name='tutorial_progress',
     )
     tutorial = models.ForeignKey(
         Tutorial,
         on_delete=models.CASCADE,
+        related_name='user_progress',
     )
-    completed_at = models.DateTimeField(
-        auto_now_add=True,
+    status = models.CharField(
+        max_length=30,
+        choices=StatusChoices.choices,
+        default=StatusChoices.NOT_STARTED,
+    )
+    bookmarked = models.BooleanField(
+        default=False,
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
     )
 
     class Meta:
         unique_together = ['user', 'tutorial']
-        verbose_name = _('tutorial completion')
-        verbose_name_plural = _('tutorial completions')
+        verbose_name = _('tutorial progress')
+        verbose_name_plural = _('tutorial progress records')
 
     def __str__(self):
-        return f"{self.user} has completed {self.tutorial}"
-    
+        return f"{self.user} – {self.tutorial.title} [{self.status}]"
+
 
 class Article(BaseLearningContent):
     categories = models.ManyToManyField(
@@ -165,7 +180,7 @@ class Article(BaseLearningContent):
         blank=True,
         related_name='articles',
     )
-    
+
     class Meta:
         verbose_name = _('article')
         verbose_name_plural = _('articles')

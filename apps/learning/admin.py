@@ -1,14 +1,14 @@
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
 
-from .models import Tutorial, Article, TutorialCompletion, Category
+from .models import Tutorial, Article, TutorialProgress, Category
 from apps.common.models import Comment, Star, TaggedItem
 
 
-class TutorialCompletionInLine(admin.TabularInline):
-    model = TutorialCompletion
+class TutorialProgressInLine(admin.TabularInline):
+    model = TutorialProgress
     extra = 0
-    readonly_fields = ['user', 'completed_at']
+    readonly_fields = ['user', 'status', 'bookmarked', 'updated_at']
 
 
 class CommentInLine(GenericTabularInline):
@@ -42,7 +42,7 @@ class TutorialAdmin(admin.ModelAdmin):
     search_fields = ['title', 'summary', 'content']
     prepopulated_fields = {'slug': ['title']}
     filter_horizontal = ['authors', 'categories']
-    inlines = [TutorialCompletionInLine, CommentInLine]
+    inlines = [TutorialProgressInLine, CommentInLine]
 
 
 @admin.register(Article)
@@ -55,8 +55,9 @@ class ArticleAdmin(admin.ModelAdmin):
     inlines = [CommentInLine, StarInLine, TaggedItemInLine]
 
 
-@admin.register(TutorialCompletion)
-class TutorialComletionAdmin(admin.ModelAdmin):
-    list_display = ['user', 'tutorial', 'completed_at']
-    list_filter = ['completed_at']
+@admin.register(TutorialProgress)
+class TutorialProgressAdmin(admin.ModelAdmin):
+    list_display = ['user', 'tutorial', 'status', 'bookmarked', 'updated_at']
+    list_filter = ['status', 'bookmarked', 'updated_at']
     search_fields = ['user__email', 'tutorial__title']
+    autocomplete_fields = ['user', 'tutorial']

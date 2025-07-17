@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import redirect, get_object_or_404
 from django.core.exceptions import PermissionDenied
 
-from .models import Article, Tutorial, TutorialCompletion
+from .models import Article, Tutorial, TutorialProgress
 from .forms import TutorialForm
 
 
@@ -133,7 +133,16 @@ class TutorialDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 class TutorialCompleteView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         tutorial = get_object_or_404(Tutorial, slug=kwargs.get('slug'))
-        TutorialCompletion.objects.get_or_create(user=request.user, tutorial=tutorial)
+
+        progress, created = TutorialProgress.objects.get_or_create(
+            user=request.user,
+            tutorial=tutorial,
+            defaults={'status': TutorialProgress.StatusChoices.COMPLETED}
+        )
+
+        if not created and progress.status != TutorialProgress.StatusChoices.COMPLETED:
+            progress.status = TutorialProgress.StatusChoices.COMPLETED
+            progress.save(update_fields=['status', 'updated_at'])
 
         return redirect(tutorial.get_absolute_url())
     

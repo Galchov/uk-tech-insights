@@ -9,12 +9,14 @@ urlpatterns = [
 
     path('tutorials/', views.TutorialListView.as_view(), name="tutorial_list"),
     path('tutorials/create/', views.TutorialCreateView.as_view(), name="tutorial_create"),
+    path('tutorials/waiting-approval/', views.WaitingApprovalRedirectView.as_view(), name='waiting_approval'),
     path('tutorials/<slug:slug>/', views.TutorialDetailView.as_view(), name="tutorial_detail"),
     path('tutorials/<slug:slug>/edit/', views.TutorialEditView.as_view(), name="tutorial_edit"),
     path('tutorials/<slug:slug>/delete/', views.TutorialDeleteView.as_view(), name="tutorial_delete"),
     path('tutorials/<slug:slug>/complete/', views.TutorialCompleteView.as_view(), name="tutorial_complete"),
     path('tutorials/<slug:slug>/toggle-publish/', views.TutorialTogglePublishView.as_view(), name='tutorial_toggle_publish'),
-
+    path('tutorials/<slug:slug>/progress/', views.TutorialProgressUpdateView.as_view(), name='tutorial_progress_update'),
+    
     path('articles/', views.ArticleListView.as_view(), name="article_list"),
     path('articles/create/', views.ArticleCreateView.as_view(), name="article_create"),
     path('articles/<slug:slug>/', views.ArticleDetailView.as_view(), name="article_detail"),

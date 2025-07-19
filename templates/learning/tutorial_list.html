@@ -3,6 +3,34 @@
 {% block content %}
 <h1 class="mb-4 text-center">Tutorials</h1>
 
+<div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+    <h1 class="mb-2 mb-md-0">Tutorials</h1>
+
+    {% if user.is_authenticated and perms.learning.add_tutorial %}
+        <div class="d-flex gap-2 flex-wrap">
+
+            <a href="{% url 'learning:tutorial_create' %}" class="btn btn-success btn-sm">
+                <i class="bi bi-plus-lg"></i> Create Tutorial
+            </a>
+
+            <a href="?filter=mine" class="btn btn-outline-primary btn-sm {% if request.GET.filter == 'mine' %}active{% endif %}">
+                <i class="bi bi-person-circle"></i> My Tutorials
+            </a>
+
+            {% if user.is_staff or user.is_superuser or perms.learning.can_publish_tutorials %}
+                <a href="?filter=waiting" class="btn btn-outline-warning btn-sm {% if request.GET.filter == 'waiting' %}active{% endif %}">
+                    <i class="bi bi-hourglass-split"></i> Waiting Approval
+                </a>
+            {% endif %}
+
+            <a href="{% url 'learning:tutorial_list' %}" class="btn btn-outline-secondary btn-sm {% if not request.GET.filter %}active{% endif %}">
+                <i class="bi bi-list-ul"></i> All Tutorials
+            </a>
+
+        </div>
+    {% endif %}
+</div>
+
 <div class="row">
     <div class="col-md-8">
         {% for tutorial in tutorials %}

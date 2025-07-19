@@ -46,7 +46,7 @@ class BaseLearningContent(models.Model):
         _('difficulty'),
         max_length=20,
         choices=DifficultyLevels,
-        default='Not provided',
+        default=DifficultyLevels.BEGINNER,
         help_text=_("Select the intended difficulty level for this content."),
     )
     estimated_duration = models.PositiveIntegerField(
@@ -166,12 +166,17 @@ class TutorialProgress(models.Model):
     )
 
     class Meta:
-        unique_together = ['user', 'tutorial']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'tutorial'],
+                name='unique_user_tutorial_progress',
+            )
+        ]
         verbose_name = _('tutorial progress')
         verbose_name_plural = _('tutorial progress records')
 
     def __str__(self):
-        return f"{self.user} – {self.tutorial.title} [{self.status}]"
+        return f"{self.user} - {self.tutorial.title} [{self.status}]"
 
 
 class Article(BaseLearningContent):

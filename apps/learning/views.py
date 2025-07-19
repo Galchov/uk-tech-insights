@@ -1,7 +1,7 @@
 from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.shortcuts import redirect, get_object_or_404
 from django.core.exceptions import PermissionDenied
 
@@ -29,7 +29,21 @@ class TutorialListView(ListView):
     context_object_name = 'tutorials'
 
     def get_queryset(self):
-        return Tutorial.objects.filter(is_published=True)
+        queryset = Tutorial.objects.all().order_by('-created_at')
+
+        queryset = queryset.filter(is_published=True)
+
+        if self.request.GET.get('filter') == 'mine' and self.request.user.is_authenticated:
+            queryset = Tutorial.objects.filter(authors=self.request.user).order_by('-created_at')
+
+        elif self.request.GET.get('filter') == 'waiting' and (
+            self.request.user.is_staff or
+            self.request.user.is_superuser or
+            self.request.user.has_perm('learning.can_publish_tutorials')
+        ):
+            queryset = Tutorial.objects.filter(is_published=False).order_by('-created_at')
+
+        return queryset
     
 
 class TutorialDetailView(DetailView):
@@ -70,6 +84,11 @@ class TutorialDetailView(DetailView):
         if self.request.user.is_authenticated:
             context['is_author'] = tutorial.authors.filter(pk=self.request.user.pk).exists()
 
+            context['user_progress'] = TutorialProgress.objects.filter(
+                user=self.request.user,
+                tutorial=tutorial
+            ).first()
+
         return context
 
 
@@ -77,7 +96,6 @@ class TutorialCreateView(PermissionRequiredMixin, CreateView):
     model = Tutorial
     form_class = TutorialForm
     template_name = 'learning/tutorial_form.html'
-    success_url = reverse_lazy('learning:tutorial_list')
     permission_required = 'learning.add_tutorial'
 
     # Change this to True if you want to raise 403 instead of redirecting
@@ -97,22 +115,26 @@ class TutorialCreateView(PermissionRequiredMixin, CreateView):
         response = super().form_valid(form)
         self.object.authors.add(self.request.user)
         return response
+    
+    def get_success_url(self):
+        return self.object.get_absolute_url()
 
 
 class TutorialEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Tutorial
     form_class = TutorialForm
     template_name = 'learning/tutorial_form.html'
-    success_url = reverse_lazy('learning:tutorial_list')
 
     def test_func(self):
         tutorial = self.get_object()
         user = self.request.user
-
         return (
             tutorial.authors.filter(pk=user.pk).exists() or
             user.has_perm('learning.can_edit_others_tutorials')
         )
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
 
 
 class TutorialDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -128,7 +150,7 @@ class TutorialDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             tutorial.authors.filter(pk=user.pk).exists() or
             user.has_perm('learning.can_edit_others_tutorials')
         )
-
+    
 
 class TutorialCompleteView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
@@ -165,6 +187,34 @@ class TutorialTogglePublishView(LoginRequiredMixin, UserPassesTestMixin, View):
 
         return redirect(tutorial.get_absolute_url())
 
+
+class TutorialProgressUpdateView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        tutorial = get_object_or_404(Tutorial, slug=kwargs.get('slug'))
+        status = request.POST.get('status')
+        toggle_bookmark = request.POST.get('toggle_bookmark')
+
+        progress, _ = TutorialProgress.objects.get_or_create(
+            user=request.user,
+            tutorial=tutorial
+        )
+
+        if status in TutorialProgress.StatusChoices.values:
+            progress.status = status
+
+        if toggle_bookmark:
+            progress.bookmarked = not progress.bookmarked
+
+        progress.save(update_fields=['status', 'bookmarked', 'updated_at'])
+        return redirect(tutorial.get_absolute_url())
+    
+
+class WaitingApprovalRedirectView(PermissionRequiredMixin, View):
+    permission_required = 'learning.can_publish_tutorials'
+
+    def get(self, request, *args, **kwargs):
+        return redirect(f"{reverse('learning:tutorial_list')}?filter=waiting")
+    
 
 ##### Article Views #####
 

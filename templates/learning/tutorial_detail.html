@@ -5,9 +5,7 @@
 
 {% block content %}
 <div class="container py-5 d-flex justify-content-center">
-
     <div class="w-100" style="max-width: 800px;">
-
         <h1 class="text-center mb-4">{{ tutorial.title }}</h1>
 
         {% if tutorial.cover_image %}
@@ -17,7 +15,7 @@
         {% endif %}
 
         {% if user.is_authenticated %}
-            <div class="d-flex justify-content-center mb-4 gap-2">
+            <div class="d-flex justify-content-center mb-4 gap-2 flex-wrap">
                 {% if user.is_staff or user.is_superuser %}
                     <a href="{% url 'learning:tutorial_edit' slug=tutorial.slug %}" class="btn btn-outline-primary btn-sm">Edit</a>
                     <a href="{% url 'learning:tutorial_delete' slug=tutorial.slug %}" class="btn btn-outline-danger btn-sm">Delete</a>
@@ -78,6 +76,38 @@
             <p>{{ stars_count }} stars so far ⭐</p>
         </div>
 
+        {% if user.is_authenticated %}
+            <div class="text-center mb-4">
+                <h5>Your Progress</h5>
+                <form method="post" action="{% url 'learning:tutorial_progress_update' slug=tutorial.slug %}" class="d-flex justify-content-center gap-2 flex-wrap">
+                    {% csrf_token %}
+
+                    <button name="status" value="not-started" class="btn btn-outline-secondary btn-sm"
+                        {% if user_progress and user_progress.status == 'not-started' %}disabled{% endif %}>
+                        Not Started
+                    </button>
+
+                    <button name="status" value="in-progress" class="btn btn-outline-primary btn-sm"
+                        {% if user_progress and user_progress.status == 'in-progress' %}disabled{% endif %}>
+                        In Progress
+                    </button>
+
+                    <button name="status" value="completed" class="btn btn-outline-success btn-sm"
+                        {% if user_progress and user_progress.status == 'completed' %}disabled{% endif %}>
+                        Mark as Completed
+                    </button>
+
+                    <button name="toggle_bookmark" value="1" class="btn btn-outline-warning btn-sm">
+                        {% if user_progress and user_progress.bookmarked %}
+                            Unbookmark
+                        {% else %}
+                            Bookmark
+                        {% endif %}
+                    </button>
+                </form>
+            </div>
+        {% endif %}
+
         <div class="mt-5">
             <h4>Comments</h4>
             {% if comments %}
@@ -95,6 +125,5 @@
         </div>
 
     </div>
-
 </div>
 {% endblock %}

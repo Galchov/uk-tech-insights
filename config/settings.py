@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'apps.learning',
     'apps.forum',
     'apps.technologies',
+    'apps.search',
 
     # Additional apps
     'django_countries',

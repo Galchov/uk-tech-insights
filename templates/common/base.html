@@ -18,7 +18,7 @@
                 <span class="fs-4 fw-semibold text-body">UK Tech Insights</span>
             </a>
 
-            <form method="get" action="#" class="d-flex flex-grow-1 mx-4" style="max-width: 500px;">
+            <form method="get" action="{% url 'search:global_search' %}" class="d-flex flex-grow-1 mx-4" style="max-width: 500px;">
                 <input class="form-control me-2" type="search" name="q" placeholder="Search..." aria-label="Search">
                 <button class="btn btn-outline-secondary" type="submit">Search</button>
             </form>

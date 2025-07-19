@@ -1,37 +1,23 @@
-<div class="d-flex py-3 border-bottom">
+<div class="card-equal">
 
   {% if tutorial.cover_image %}
-    <div class="flex-shrink-0 me-3 d-flex align-items-center" style="width: 120px; height: 120px;">
-      <img src="{{ tutorial.cover_image.url }}"
-           alt="{{ tutorial.title }}"
-           class="rounded shadow-sm"
-           style="width: 100%; height: 100%; object-fit: cover;">
+    <div class="card-img">
+      <img src="{{ tutorial.cover_image.url }}" alt="{{ tutorial.title }}">
     </div>
   {% endif %}
 
-  <div class="flex-grow-1 d-flex flex-column justify-content-center">
-
-    <h5 class="mb-1">
-      <a href="{{ tutorial.get_absolute_url }}" class="text-decoration-none text-dark fw-bold">
+  <div class="card-body">
+    <h5>
+      <a href="{{ tutorial.get_absolute_url }}" class="text-decoration-none text-dark">
         {{ tutorial.title }}
       </a>
     </h5>
 
-    <p class="mb-1 text-muted small">
-      {{ tutorial.created_at|date:"Y-m-d" }}
-      •
+    <p class="text-muted small mb-1">
+      {{ tutorial.created_at|date:"Y-m-d" }} •
       <span class="badge bg-secondary">{{ tutorial.get_difficulty_display }}</span>
     </p>
 
-    <p class="mb-0 text-muted" style="
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: -webkit-box;
-      -webkit-line-clamp: 3; /* number of lines to show before cutting */
-      -webkit-box-orient: vertical;
-      ">
-      {{ tutorial.summary }}
-    </p>
-
+    <p class="summary">{{ tutorial.summary }}</p>
   </div>
 </div>

@@ -1,40 +1,25 @@
-<div class="d-flex py-3 border-bottom">
+<div class="card-equal">
 
   {% if article.cover_image %}
-    <div class="flex-shrink-0 me-3 d-flex align-items-center" style="width: 120px; height: 120px;">
-      <img src="{{ article.cover_image.url }}"
-           alt="{{ article.title }}"
-           class="rounded shadow-sm"
-           style="width: 100%; height: 100%; object-fit: cover;">
+    <div class="card-img">
+      <img src="{{ article.cover_image.url }}" alt="{{ article.title }}">
     </div>
   {% endif %}
 
-  <div class="flex-grow-1 d-flex flex-column justify-content-center">
-
-    <h5 class="mb-1">
-      <a href="{{ article.get_absolute_url }}" class="text-decoration-none text-dark fw-bold">
+  <div class="card-body">
+    <h5>
+      <a href="{{ article.get_absolute_url }}" class="text-decoration-none text-dark">
         {{ article.title }}
       </a>
     </h5>
 
-    <p class="mb-1 text-muted small">
+    <p class="text-muted small mb-1">
       {% for author in article.authors.all %}
         {{ author.get_full_name|default:author.username }}{% if not forloop.last %}, {% endif %}
-      {% empty %}
-        Unknown
-      {% endfor %}
+      {% empty %}Unknown{% endfor %}
       • {{ article.created_at|date:"Y-m-d" }}
     </p>
 
-    <p class="mb-0 text-muted" style="
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      ">
-      {{ article.summary }}
-    </p>
-
+    <p class="summary">{{ article.summary }}</p>
   </div>
 </div>

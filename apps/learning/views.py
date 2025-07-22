@@ -6,7 +6,7 @@ from django.shortcuts import redirect, get_object_or_404
 from django.core.exceptions import PermissionDenied
 
 from .models import Article, Tutorial, TutorialProgress
-from .forms import TutorialForm
+from .forms import TutorialForm, ArticleForm
 
 
 class LearningHomeView(TemplateView):
@@ -250,17 +250,77 @@ class ArticleDetailView(DetailView):
         return context
 
 
-class ArticleCreateView(CreateView):
+class ArticleCreateView(PermissionRequiredMixin, CreateView):
+    model = Article
+    form_class = ArticleForm
+    template_name = 'learning/article_form.html'
+    permission_required = 'learning.add_article'
+    raise_exception = False
+    login_url = reverse_lazy('accounts:login')
+
+    def handle_no_permission(self):
+        if not self.request.user.is_authenticated:
+            return redirect(self.get_login_url())
+        return redirect('accounts:verification_request')
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        self.object.authors.add(self.request.user)
+        return response
+    
+    def get_success_url(self):
+        return self.object.get_absolute_url()
+
+
+class ArticleEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Article
+    form_class = ArticleForm
     template_name = 'learning/article_form.html'
 
+    def test_func(self):
+        article = self.get_object()
+        user = self.request.user
+        return (
+            article.authors.filter(pk=user.pk).exists() or
+            user.has_perm('learning.can_edit_others_articles')
+        )
 
-class ArticleEditView(UpdateView):
-    template_name = 'learning/article_form.html'
+    def get_success_url(self):
+        return self.object.get_absolute_url()
 
 
-class ArticleDeleteView(DeleteView):
+class ArticleDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Article
     template_name = 'learning/article_confirm_delete.html'
+    success_url = reverse_lazy('learning:article_list')
 
+    def test_func(self):
+        article = self.get_object()
+        user = self.request.user
+        return (
+            article.authors.filter(pk=user.pk).exists() or
+            user.has_perm('learning.can_edit_others_articles')
+        )
+
+
+class ArticleTogglePublishView(LoginRequiredMixin, UserPassesTestMixin, View):
+    def test_func(self):
+        article = get_object_or_404(Article, slug=self.kwargs['slug'])
+        user = self.request.user
+        return (
+            user.is_staff or
+            user.is_superuser or
+            article.authors.filter(pk=user.pk).exists()
+        )
+
+    def post(self, request, *args, **kwargs):
+        article = get_object_or_404(Article, slug=kwargs['slug'])
+
+        article.is_published = not article.is_published
+        article.save(update_fields=['is_published'])
+
+        return redirect(article.get_absolute_url())
+    
 
 ##### Author Content #####
 

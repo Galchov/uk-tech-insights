@@ -5,7 +5,6 @@
 
 {% block content %}
 <div class="container py-5 d-flex justify-content-center">
-
     <div class="w-100" style="max-width: 800px;">
         <h1 class="text-center mb-4">{{ article.title }}</h1>
 
@@ -15,17 +14,35 @@
             </div>
         {% endif %}
 
+        {% if user.is_authenticated %}
+            <div class="d-flex justify-content-center mb-4 gap-2 flex-wrap">
+                {% if user.is_staff or user.is_superuser %}
+                    <a href="{% url 'learning:article_edit' slug=article.slug %}" class="btn btn-outline-primary btn-sm">Edit</a>
+                    <a href="{% url 'learning:article_delete' slug=article.slug %}" class="btn btn-outline-danger btn-sm">Delete</a>
+
+                    <form method="post" action="{% url 'learning:article_toggle_publish' slug=article.slug %}" style="display: inline;">
+                        {% csrf_token %}
+                        {% if article.is_published %}
+                            <button type="submit" class="btn btn-outline-warning btn-sm">Unpublish</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-outline-success btn-sm">Publish</button>
+                        {% endif %}
+                    </form>
+
+                {% elif is_author %}
+                    <a href="{% url 'learning:article_edit' slug=article.slug %}" class="btn btn-outline-primary btn-sm">Edit</a>
+                    <a href="{% url 'learning:article_delete' slug=article.slug %}" class="btn btn-outline-danger btn-sm">Delete</a>
+                {% endif %}
+            </div>
+        {% endif %}
+
         <p class="text-center text-muted">
-            {% if article.category %}
-                <strong>Category:</strong> {{ article.category.name }} |
-            {% endif %}
+            <strong>Difficulty:</strong> {{ article.get_difficulty_display }} |
             <strong>Created:</strong> {{ article.created_at|date:"F j, Y" }} |
             <strong>by</strong>
             {% for author in article.authors.all %}
                 {{ author.get_full_name|default:author.username }}{% if not forloop.last %}, {% endif %}
-            {% empty %}
-                Unknown
-            {% endfor %}
+            {% empty %}Unknown{% endfor %}
         </p>
 
         <div class="p-3 border rounded mb-4" style="background-color: rgba(0,0,0,0.02);">
@@ -56,6 +73,19 @@
             <p>{{ stars_count }} stars so far ⭐</p>
         </div>
 
+        {% if user.is_authenticated %}
+            <div class="text-center mb-4">
+                    <button name="toggle_bookmark" value="1" class="btn btn-outline-warning btn-sm">
+                        {% if user_progress and user_progress.bookmarked %}
+                            Unbookmark
+                        {% else %}
+                            Bookmark
+                        {% endif %}
+                    </button>
+                </form>
+            </div>
+        {% endif %}
+
         <div class="mt-5">
             <h4>Comments</h4>
             {% if comments %}
@@ -71,8 +101,6 @@
                 <p>No comments yet. Be the first to comment!</p>
             {% endif %}
         </div>
-
     </div>
-
 </div>
 {% endblock %}

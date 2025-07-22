@@ -20,7 +20,7 @@
         </div>
 
         <div class="col-lg-6 mb-4 border-start">
-            <h2 class="text-center"><a href="#">Articles</a></h2>
+            <h2 class="text-center"><a href="{% url 'learning:article_list' %}">Articles</a></h2>
             {% for article in articles %}
                 <div class="mb-4">
                     {% include 'learning/_article_card.html' with article=article %}

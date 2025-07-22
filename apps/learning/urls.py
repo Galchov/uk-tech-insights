@@ -22,6 +22,7 @@ urlpatterns = [
     path('articles/<slug:slug>/', views.ArticleDetailView.as_view(), name="article_detail"),
     path('articles/<slug:slug>/edit/', views.ArticleEditView.as_view(), name="article_edit"),
     path('articles/<slug:slug>/delete/', views.ArticleDeleteView.as_view(), name="article_delete"),
+    path('articles/<slug:slug>/toggle-publish/', views.ArticleTogglePublishView.as_view(), name="article_toggle_publish"),
 
     path('author/<str:username>/', views.AuthorContentListView.as_view(), name="author_content"),
 ]

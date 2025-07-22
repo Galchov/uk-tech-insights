@@ -27,4 +27,5 @@ urlpatterns = [
     path('forum/', include('apps.forum.urls')),
     path('learning/', include('apps.learning.urls')),
     path('search/', include('apps.search.urls')),
+    path('news/', include('apps.news.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

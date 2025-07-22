@@ -1,0 +1,44 @@
+{% extends 'common/base.html' %}
+{% block title %}News | UK Tech Insights{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="mb-4 text-center">Latest News</h1>
+
+  <div class="text-end mb-3">
+    {% if perms.news.add_newsarticle %}
+      <a href="{% url 'news:article_create' %}" class="btn btn-primary">Create Article</a>
+    {% endif %}
+  </div>
+
+  <div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for article in articles %}
+      <div class="col">
+        <div class="card h-100">
+          {% if article.cover_image %}
+            <img src="{{ article.cover_image.url }}" class="card-img-top" alt="{{ article.title }}">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">
+              <a href="{% url 'news:article_detail' article.slug %}" class="text-decoration-none text-dark">
+                {{ article.title }}
+              </a>
+            </h5>
+            <p class="text-muted small">
+              {% for author in article.authors.all %}
+                {{ author.get_full_name|default:author.username }}{% if not forloop.last %}, {% endif %}
+              {% empty %}Unknown{% endfor %}
+              • {{ article.created_at|date:"Y-m-d" }}
+            </p>
+            <p class="card-text">{{ article.summary|truncatewords:25 }}</p>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>No articles available.</p>
+    {% endfor %}
+  </div>
+
+  {% include 'common/pagination.html' with page_obj=page_obj %}
+</div>
+{% endblock %}

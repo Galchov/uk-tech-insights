@@ -1,0 +1,9 @@
+{% extends 'common/base.html' %}
+{% block title %}{{ category.name }} | News{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="mb-4 text-center">Category: {{ category.name }}</h1>
+  {% include 'news/article_list.html' with articles=articles only %}
+</div>
+{% endblock %}

@@ -18,7 +18,7 @@ class NewsArticleListView(ListView):
 class NewsArticleDetailView(DetailView):
     model = NewsArticle
     template_name = 'news/article_detail.html'
-    context_object_name = 'articles'
+    context_object_name = 'article'
     slug_field = 'slug'
     slug_url_kwarg = 'slug'
 
@@ -89,7 +89,7 @@ class NewsArticleUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UserPas
 
     def test_func(self):
         article = self.get_object()
-        return self.request.user == article.created_by or self.request.user.is_staff
+        return self.request.user in article.authors.all() or self.request.user.is_staff
 
 
 class NewsArticleDeleteView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, DeleteView):

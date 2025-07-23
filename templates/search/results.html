@@ -33,6 +33,16 @@
         </ul>
     {% endif %}
 
+    {% if news %}
+    <h4>
+        <ul>
+            {% for item in news %}
+                <li><a href="{{ item.get_absolute_url }}">{{ item.title }}</a></li>
+            {% endfor %}
+        </ul>
+    </h4>
+    {% endif %}
+
     {% if not posts and not tutorials and not articles %}
         <p>No results found for your query.</p>
     {% endif %}

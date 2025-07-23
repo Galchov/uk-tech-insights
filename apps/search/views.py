@@ -4,6 +4,7 @@ from django.db.models import Q
 
 from apps.learning.models import Tutorial, Article
 from apps.forum.models import ForumPost
+from apps.news.models import NewsArticle
 
 
 class GlobalSearchView(TemplateView):
@@ -28,6 +29,12 @@ class GlobalSearchView(TemplateView):
             ).distinct()
 
             context['articles'] = Article.objects.filter(
+                Q(title__icontains=query) |
+                Q(summary__icontains=query) |
+                Q(content__icontains=query)
+            ).distinct()
+
+            context['news'] = NewsArticle.objects.filter(
                 Q(title__icontains=query) |
                 Q(summary__icontains=query) |
                 Q(content__icontains=query)

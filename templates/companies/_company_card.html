@@ -1,0 +1,17 @@
+<div class="card-equal h-100 border shadow p-4">
+
+    {% if company.logo %}
+    <div class="card-img">
+      <img src="{{ company.logo.url }}" alt="{{ company.name }}" class="border shadow" />
+    </div>
+    {% endif %}
+
+    <div>
+      <a href="{% url 'companies:company_detail' company.slug %}">
+        <h4>{{ company.name }}</h4>
+      </a>
+      
+      <p>{{ company.description }}</p>
+    </div>
+
+</div>

@@ -1,0 +1,17 @@
+{% extends 'common/base.html' %}
+
+{% block title %}Companies | UK Tech Insights{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    {% for company in companies %}
+    <div>
+        <div>
+        {% include 'companies/_company_card.html' with company=company %}
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
+{% endblock %}

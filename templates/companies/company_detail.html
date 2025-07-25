@@ -5,6 +5,20 @@
 {% block content %}
 <div>
     <h1>{{ company.name }}</h1>
+</div>
+{% if user.is_authenticated or user.is_staff or user.is_superuser %}
+<div>
+    <div>
+    <a href="{% url 'companies:company_edit' company.slug %}">Edit</a>
+    </div>
+    <div>
+        <a href="{% url 'companies:company_delete' company.slug %}">Delete</a>
+    </div>
+</div>
+
+{% endif %}
+<div>
+    <p>{{ company.formatted_foundation_date }}</p>
     <p>{{ company.description }}</p>
 </div>
 {% endblock %}

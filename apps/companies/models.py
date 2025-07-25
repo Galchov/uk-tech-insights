@@ -53,18 +53,21 @@ class Company(models.Model):
         related_name='companies_operating',
         verbose_name=_('Countries of operation'),
         help_text=_("Company can have businesses in multiple countries."),
+        blank=True,
     )
     industries = models.ManyToManyField(
         to='Industry',
         related_name='companies',
         verbose_name=_('Industry'),
         help_text=_("Company can cover multiple areas of operation."),
+        blank=True,
     )
     tech_stack = models.ManyToManyField(
         to='technologies.Technology',
         related_name='companies',
         verbose_name=_('Tech stack'),
         help_text=_("The tech stack company uses for their services."),
+        blank=True,
     )
 
     class Meta:
@@ -91,6 +94,14 @@ class Company(models.Model):
 
     def get_absolute_url(self):
         return reverse('companies:company_detail', kwargs={'slug': self.slug})
+    
+    @property
+    def formatted_foundation_date(self):
+        """Formatted to display month's name and the year"""
+
+        if self.foundation_date:
+            return self.foundation_date.strftime("%B %Y")
+        return "Not available"
 
 
 class Location(models.Model):

@@ -17,6 +17,65 @@
 
     <div class="row g-4 justify-content-center">
 
+        {% if user.is_staff %}
+        <div class="col-12 col-lg-4">
+            <div class="border p-4">
+                <h2 class="text-center">Account Settings</h2>
+                <p class="text-center">Manage your staff account</p>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'accounts:password_change' user.pk %}">Change Password</a></li>
+                    <li><a href="{% url 'accounts:profile_edit' user.pk %}">Edit Profile</a></li>
+                    <li><a href="{% url 'accounts:account_edit' user.pk %}">Edit Account</a></li>
+                    <li><a href="{% url 'accounts:delete_account' user.pk %}">Delete Account</a></li>
+                    <li><a href="#">Privacy & Security</a></li>
+                    {% if user.is_superuser %}
+                    <li><a href="{% url 'admin:index' %}">Admin Panel</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-8">
+            <div class="border p-4">
+                <h2 class="text-center mb-4">Platform Management</h2>
+                <p class="text-center">Moderate and manage platform content across domains</p>
+
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                    <div class="col">
+                        <h5 class="mb-2">🗨️ Forum</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#">Moderate Threads</a></li>
+                            <li><a href="#">Manage Tags</a></li>
+                            <li><a href="#">Reported Posts</a></li>
+                            <li><a href="#">Forum Settings</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col">
+                        <h5 class="mb-2">📚 Learning</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#">Review Tutorials</a></li>
+                            <li><a href="#">Approve Courses</a></li>
+                            <li><a href="#">Track Progress</a></li>
+                            <li><a href="#">Learning Settings</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col">
+                        <h5 class="mb-2">📰 News</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#">Review Articles</a></li>
+                            <li><a href="#">Moderate Comments</a></li>
+                            <li><a href="#">Tag Management</a></li>
+                            <li><a href="#">News Settings</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        {% else %}
         <div class="col-12 col-lg-6">
             <div class="border p-4 h-100">
                 <h2 class="text-center mb-3">My Work</h2>
@@ -74,15 +133,14 @@
                     <li><a href="{% url 'accounts:account_edit' user.pk %}">Edit Account</a></li>
                     <li><a href="{% url 'accounts:delete_account' user.pk %}">Delete Account</a></li>
                     <li><a href="#">Privacy & Security</a></li>
-                    {% if user.is_staff %}
-                        <li><a href="{% url 'admin:index' %}">Admin Panel</a></li>
-                    {% endif %}
                 </ul>
             </div>
         </div>
+        {% endif %}
 
     </div>
 
+    {% if not user.is_staff %}
     <div class="border p-4 mt-5 text-center">
         <h2 class="mb-4">Quick Stats</h2>
         <div class="row g-4 justify-content-center">
@@ -117,6 +175,7 @@
 
         </div>
     </div>
+    {% endif %}
 
 </div>
 {% endblock %}

@@ -1,43 +1,18 @@
-from django.shortcuts import render
 from django.views.generic import TemplateView
-from django.db.models import Q
 
-from apps.learning.models import Tutorial, Article
-from apps.forum.models import ForumPost
-from apps.news.models import NewsArticle
+from .services import search_database
 
 
 class GlobalSearchView(TemplateView):
     template_name = 'search/results.html'
-
+    context_object_name = 'results'
+    
     def get_context_data(self, **kwargs):
-        query = self.request.GET.get('q')
         context = super().get_context_data(**kwargs)
+        query = self.request.GET.get('q')
+        results = search_database(query)
 
-        if query:
-            context['query'] = query
-
-            context['posts'] = ForumPost.objects.filter(
-                Q(title__icontains=query) |
-                Q(content__icontains=query)
-            ).distinct()
-
-            context['tutorials'] = Tutorial.objects.filter(
-                Q(title__icontains=query) |
-                Q(summary__icontains=query) |
-                Q(content__icontains=query)
-            ).distinct()
-
-            context['articles'] = Article.objects.filter(
-                Q(title__icontains=query) |
-                Q(summary__icontains=query) |
-                Q(content__icontains=query)
-            ).distinct()
-
-            context['news'] = NewsArticle.objects.filter(
-                Q(title__icontains=query) |
-                Q(summary__icontains=query) |
-                Q(content__icontains=query)
-            ).distinct()
+        context['query'] = query
+        context['results'] = results
 
         return context

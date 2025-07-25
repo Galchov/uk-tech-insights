@@ -42,7 +42,7 @@
 
                 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                     <div class="col">
-                        <h5 class="mb-2">🗨️ Forum</h5>
+                        <h5 class="mb-2">Forum</h5>
                         <ul class="list-unstyled">
                             <li><a href="#">Moderate Threads</a></li>
                             <li><a href="#">Manage Tags</a></li>
@@ -52,7 +52,7 @@
                     </div>
 
                     <div class="col">
-                        <h5 class="mb-2">📚 Learning</h5>
+                        <h5 class="mb-2">Learning</h5>
                         <ul class="list-unstyled">
                             <li><a href="#">Review Tutorials</a></li>
                             <li><a href="#">Approve Courses</a></li>
@@ -62,12 +62,11 @@
                     </div>
 
                     <div class="col">
-                        <h5 class="mb-2">📰 News</h5>
+                        <h5 class="mb-2">Companies</h5>
                         <ul class="list-unstyled">
-                            <li><a href="#">Review Articles</a></li>
-                            <li><a href="#">Moderate Comments</a></li>
-                            <li><a href="#">Tag Management</a></li>
-                            <li><a href="#">News Settings</a></li>
+                            <li><a href="{% url 'companies:company_add' %}">Add Company</a></li>
+                            <li><a href="{% url 'companies:location_add' %}">Add Location</a></li>
+                            <li><a href="{% url 'companies:location_list' %}">See Locations</a></li>
                         </ul>
                     </div>
 

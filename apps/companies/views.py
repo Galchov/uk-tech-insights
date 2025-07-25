@@ -1,11 +1,10 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.urls import reverse_lazy
-from django.contrib import messages
+from django.urls import reverse, reverse_lazy
 
-from .models import Company
-from .forms import CompanyForm
+from .models import Company, Location
+from .forms import CompanyForm, LocationForm
 
 
 ##### Public Views #####
@@ -25,6 +24,8 @@ class CompanyDetailView(DetailView):
 
 
 ##### Admins and Moderators Only Views #####
+
+##### Companies #####
 
 class CompanyAddView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Company
@@ -73,3 +74,55 @@ class CompanyDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView)
     context_object_name = 'company'
     permission_required = 'companies.delete_company'
     success_url = reverse_lazy('companies:company_list')
+
+
+##### Locations #####
+
+class LocationListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    model = Location
+    template_name = 'companies/location_list.html'
+    context_object_name = 'locations'
+    permission_required = 'companies.view_location'
+    paginate_by = 10
+    queryset = Location.objects.all()
+
+
+class LocationAddView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    model = Location
+    form_class = LocationForm
+    template_name = 'companies/location_form.html'
+    permission_required = 'companies.add_location'
+
+    raise_exception = False
+    login_url = reverse_lazy('accounts:login')
+
+    def handle_no_permission(self):
+        if not self.request.user.is_authenticated:
+            return redirect(self.get_login_url())
+        return redirect('companies:company_list')
+    
+    def get_success_url(self):
+        return reverse('accounts:dashboard', kwargs={'pk': self.request.user.pk})
+
+
+class LocationEditView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    model = Location
+    form_class = LocationForm
+    template_name = 'companies/location_form.html'
+    permission_required = 'companies.change_location'
+
+    def handle_no_permission(self):
+        if not self.request.user.is_authenticated:
+            return redirect(self.get_login_url())
+        return redirect('companies:company_list')
+    
+    def get_success_url(self):
+        return reverse('accounts:dashboard', kwargs={'pk': self.request.user.pk})
+
+
+class LocationDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    model = Location
+    template_name = 'companies/location_confirm_delete.html'
+    context_object_name = 'location'
+    permission_required = 'companies.delete_location'
+    success_url = reverse_lazy('companies:location_list')

@@ -41,18 +41,29 @@ class Company(models.Model):
         verbose_name=_('Foundation date'),
         help_text=_("Date the company was founded."),
     )
-    headquarters = models.ForeignKey(
-        to='Location',
+    country = models.ForeignKey(
+        to='locations.Country',
         on_delete=models.SET_NULL,
         null=True,
-        verbose_name=_('Headquarters'),
-        help_text=_("Company's head office."),
+        related_name='headquartered_companies',
+        verbose_name='Headquarters Country',
+    )
+    city = models.ForeignKey(
+        to='locations.City',
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='companies',
+        verbose_name='Headquarters City',
+    )
+    address = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name='Company Address',
     )
     operating_countries = models.ManyToManyField(
-        to='Location',
-        related_name='companies_operating',
-        verbose_name=_('Countries of operation'),
-        help_text=_("Company can have businesses in multiple countries."),
+        to='locations.Country',
+        related_name='operating_companies',
+        verbose_name='Operating Countries',
         blank=True,
     )
     industries = models.ManyToManyField(
@@ -102,31 +113,6 @@ class Company(models.Model):
         if self.foundation_date:
             return self.foundation_date.strftime("%B %Y")
         return "Not available"
-
-
-class Location(models.Model):
-    country = models.CharField(
-        max_length=60,
-        verbose_name=_('Country'),
-    )
-    city = models.CharField(
-        max_length=60,
-        blank=True,
-        verbose_name=_('City'),
-    )
-    address = models.CharField(
-        max_length=255,
-        blank=True,
-        verbose_name=_('Address'),
-    )
-
-    class Meta:
-        verbose_name = "Location"
-        verbose_name_plural = "Locations"
-        ordering = ['country', 'city']
-
-    def __str__(self):
-        return f"{self.city}, {self.country}" if self.city else self.country
 
 
 class Industry(models.Model):

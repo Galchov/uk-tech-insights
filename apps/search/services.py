@@ -1,6 +1,6 @@
 from django.db.models import Q
 
-from apps.companies.models import Company, Industry, Location
+from apps.companies.models import Company, Industry
 from apps.learning.models import Article, Tutorial
 from apps.news.models import NewsArticle
 from apps.technologies.models import Technology

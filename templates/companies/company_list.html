@@ -11,6 +11,8 @@
         {% include 'companies/_company_card.html' with company=company %}
         </div>
     </div>
+    {% empty %}
+    <p class="text-center">No companies to display.</p>
     {% endfor %}
 
 </div>

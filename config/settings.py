@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'apps.news',
     'apps.companies',
     'apps.jobs',
+    'apps.locations',
 
     # Additional apps
     'django_countries',

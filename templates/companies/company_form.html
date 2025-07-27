@@ -25,12 +25,8 @@
             <button type="submit">
                 {% if form.instance.pk %}Update Company{% else %}Add Company{% endif %}
             </button>
-            
-            {% if form.instance.pk %}
-            <a href="{% url 'companies:company_detail' company.slug %}">Cancel</a>
-            {% else %}
-            <a href="{% url 'companies:company_list' %}">Cancel</a>
-            {% endif %}
+
+            <a href="{% url 'accounts:dashboard' user.pk %}">Cancel</a>
         </div>
     </form>
 </div>

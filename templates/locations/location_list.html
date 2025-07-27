@@ -1,0 +1,21 @@
+{% extends 'common/base.html' %}
+
+{% block content %}
+<div>
+    <a href="{% url 'locations:location_add' %}">Add location</a>
+    <a href="{% url 'accounts:dashboard' user.pk %}">Back to Dashboard</a>
+    <ul>
+    {% for city in cities %}
+        <li>
+            <a href="{% url 'locations:location_edit' city.pk %}">
+                {{ city.name }}, {{ city.country.name }}
+            </a>
+            &nbsp;—&nbsp;
+            <a href="{% url 'locations:location_delete' city.pk %}" class="text-danger">Delete</a>
+        </li>
+    {% empty %}
+        <li>No locations added yet.</li>
+    {% endfor %}
+    </ul>
+</div>
+{% endblock %}

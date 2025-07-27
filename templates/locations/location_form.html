@@ -1,0 +1,32 @@
+{% extends 'common/base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div>
+    <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div>
+        {{ form.city_name.label_tag }}<br>
+        {{ form.city_name }}
+        {% if form.city_name.errors %}
+        <div class="text-danger">{{ form.city_name.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <div>
+        {{ form.country_name.label_tag }}<br>
+        {{ form.country_name }}
+        {% if form.country_name.errors %}
+        <div class="text-danger">{{ form.country_name.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <button type="submit">
+        {% if is_new %}Add Location{% else %}Save Changes{% endif %}
+    </button>
+    <a href="{% url 'locations:location_list' %}">Cancel</a>
+    </form>
+</div>
+{% endblock %}

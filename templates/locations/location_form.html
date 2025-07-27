@@ -2,31 +2,41 @@
 {% load widget_tweaks %}
 
 {% block content %}
-<div>
+<div class="mx-auto border p-4 mt-4" style="max-width: 400px;">
+    <h5 class="text-center mb-3">
+        {% if is_new %}Add{% else %}Edit{% endif %} Location
+    </h5>
+
+    {% if form.non_field_errors %}
+    <div class="text-danger small mb-2">
+        {% for error in form.non_field_errors %}
+            <div>{{ error }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <form method="post">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
+        {% csrf_token %}
 
-    <div>
-        {{ form.city_name.label_tag }}<br>
-        {{ form.city_name }}
-        {% if form.city_name.errors %}
-        <div class="text-danger">{{ form.city_name.errors.0 }}</div>
-        {% endif %}
-    </div>
+        {% for field in form %}
+        <div class="mb-3 text-start">
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {{ field|add_class:"form-control" }}
+            {% for error in field.errors %}
+                <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+        </div>
+        {% endfor %}
 
-    <div>
-        {{ form.country_name.label_tag }}<br>
-        {{ form.country_name }}
-        {% if form.country_name.errors %}
-        <div class="text-danger">{{ form.country_name.errors.0 }}</div>
-        {% endif %}
-    </div>
+        <div class="d-grid mb-2">
+            <button type="submit" class="btn btn-primary">
+                {% if is_new %}Add Location{% else %}Save Changes{% endif %}
+            </button>
+        </div>
 
-    <button type="submit">
-        {% if is_new %}Add Location{% else %}Save Changes{% endif %}
-    </button>
-    <a href="{% url 'locations:location_list' %}">Cancel</a>
+        <div class="text-center">
+            <a href="{% url 'locations:location_list' %}" class="btn btn-outline-secondary">Cancel</a>
+        </div>
     </form>
 </div>
 {% endblock %}

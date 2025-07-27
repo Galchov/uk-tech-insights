@@ -3,14 +3,17 @@
 {% block title %}Confirm Deletion{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <h2 class="mb-3">Delete "{{ location.name }}"</h2>
-    <p class="text-danger">Are you sure you want to permanently delete <strong>{{ location.name }}</strong>?</p>
+<div class="mx-auto border p-4 mt-4" style="max-width: 700px;">
+    <h2 class="text-center mb-4">Delete {{ location.name }}</h2>
+    <p class="text-danger text-center">
+        Are you sure you want to permanently delete <strong>{{ location.name }}</strong>?
+    </p>
 
-    <form method="post">
+    <form method="post" class="text-center mt-4">
         {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Yes, Delete</button>
-        <a href="{% url 'locations:location_list' %}" class="btn btn-secondary">Cancel</a>
+
+        <button type="submit" class="btn btn-danger me-2">Confirm</button>
+        <a href="{% url 'locations:location_list' %}" class="btn btn-outline-secondary">Cancel</a>
     </form>
 </div>
 {% endblock %}

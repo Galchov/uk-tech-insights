@@ -1,21 +1,25 @@
 {% extends 'common/base.html' %}
 
 {% block content %}
-<div>
-    <a href="{% url 'locations:location_add' %}">Add location</a>
-    <a href="{% url 'accounts:dashboard' user.pk %}">Back to Dashboard</a>
-    <ul>
-    {% for city in cities %}
-        <li>
-            <a href="{% url 'locations:location_edit' city.pk %}">
-                {{ city.name }}, {{ city.country.name }}
-            </a>
-            &nbsp;—&nbsp;
-            <a href="{% url 'locations:location_delete' city.pk %}" class="text-danger">Delete</a>
-        </li>
-    {% empty %}
-        <li>No locations added yet.</li>
-    {% endfor %}
-    </ul>
+<div class="mx-auto border p-4 mt-4" style="max-width: 700px;">
+    <div class="d-flex justify-content-between mb-3">
+        <a href="{% url 'locations:location_add' %}" class="btn btn-primary">Add Location</a>
+        <a href="{% url 'accounts:dashboard' user.pk %}" class="btn btn-outline-secondary">Back to Dashboard</a>
+    </div>
+
+    {% if cities %}
+        <ul class="list-group">
+            {% for city in cities %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{% url 'locations:location_edit' city.pk %}">
+                    {{ city.name }}, {{ city.country.name }}
+                </a>
+                <a href="{% url 'locations:location_delete' city.pk %}" class="text-danger small">Delete</a>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-center text-muted mt-4">No locations added yet.</p>
+    {% endif %}
 </div>
 {% endblock %}

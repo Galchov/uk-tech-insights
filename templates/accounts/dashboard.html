@@ -44,26 +44,23 @@
                     <div class="col">
                         <h5 class="mb-2">Forum</h5>
                         <ul class="list-unstyled">
-                            <li><a href="#">Moderate Threads</a></li>
-                            <li><a href="#">Manage Tags</a></li>
-                            <li><a href="#">Reported Posts</a></li>
-                            <li><a href="#">Forum Settings</a></li>
+                            <li><a href="{% url 'forum:post_list' %}">See Posts</a></li>
+                            <li><a href="{% url 'forum:unpublished_post_list' %}">Approve Posts</a></li>
                         </ul>
                     </div>
 
                     <div class="col">
                         <h5 class="mb-2">Learning</h5>
                         <ul class="list-unstyled">
-                            <li><a href="#">Review Tutorials</a></li>
-                            <li><a href="#">Approve Courses</a></li>
-                            <li><a href="#">Track Progress</a></li>
-                            <li><a href="#">Learning Settings</a></li>
+                            <li><a href="{% url 'learning:tutorial_list' %}">Review Tutorials</a></li>
+                            <li><a href="{% url 'learning:waiting_approval' %}">Approve Courses</a></li>
                         </ul>
                     </div>
 
                     <div class="col">
                         <h5 class="mb-2">Companies</h5>
                         <ul class="list-unstyled">
+                            <li><a href="{% url 'companies:company_list' %}">See Companies</a></li>
                             <li><a href="{% url 'companies:company_add' %}">Add Company</a></li>
                             <li><a href="{% url 'locations:location_list' %}">See Locations</a></li>
                         </ul>

@@ -41,19 +41,12 @@ class Company(models.Model):
         verbose_name=_('Foundation date'),
         help_text=_("Date the company was founded."),
     )
-    country = models.ForeignKey(
-        to='locations.Country',
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='headquartered_companies',
-        verbose_name='Headquarters Country',
-    )
-    city = models.ForeignKey(
+    location = models.ForeignKey(
         to='locations.City',
         on_delete=models.SET_NULL,
         null=True,
         related_name='companies',
-        verbose_name='Headquarters City',
+        verbose_name='Headquarters Location',
     )
     address = models.CharField(
         max_length=255,

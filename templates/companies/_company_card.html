@@ -1,17 +1,21 @@
-<div class="card-equal h-100 border shadow p-4">
-
+<div class="card h-100 shadow-sm">
     {% if company.logo %}
-    <div class="card-img">
-      <img src="{{ company.logo.url }}" alt="{{ company.name }}" class="border shadow" />
-    </div>
+        <img src="{{ company.logo.url }}" class="card-img-top p-3" alt="{{ company.name }} Logo" style="max-height: 180px; object-fit: contain;">
+    {% else %}
+        <div class="card-img-top d-flex align-items-center justify-content-center bg-light text-muted p-5" style="height: 180px;">
+            No Logo
+        </div>
     {% endif %}
 
-    <div>
-      <a href="{% url 'companies:company_detail' company.slug %}">
-        <h4>{{ company.name }}</h4>
-      </a>
-      
-      <p>{{ company.description }}</p>
-    </div>
+    <div class="card-body d-flex flex-column">
+        <h5 class="card-title">{{ company.name }}</h5>
 
+        {% if company.description %}
+        <p class="card-text">{{ company.description|truncatechars:120 }}</p>
+        {% endif %}
+
+        <div class="mt-auto">
+            <a href="{% url 'companies:company_detail' company.slug %}" class="btn btn-sm btn-outline-primary">View Details</a>
+        </div>
+    </div>
 </div>

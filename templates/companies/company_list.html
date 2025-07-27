@@ -3,17 +3,17 @@
 {% block title %}Companies | UK Tech Insights{% endblock %}
 
 {% block content %}
-<div class="space-y-6">
-
-    {% for company in companies %}
-    <div>
-        <div>
-        {% include 'companies/_company_card.html' with company=company %}
+<div class="container mt-4">
+    {% if companies %}
+    <div class="row g-4">
+        {% for company in companies %}
+        <div class="col-12 col-md-6 col-lg-4">
+            {% include 'companies/_company_card.html' with company=company %}
         </div>
+        {% endfor %}
     </div>
-    {% empty %}
-    <p class="text-center">No companies to display.</p>
-    {% endfor %}
-
+    {% else %}
+    <p class="text-center text-muted py-5">No companies to display.</p>
+    {% endif %}
 </div>
 {% endblock %}

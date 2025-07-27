@@ -3,22 +3,75 @@
 {% block title %}{{ company.name }} | Companies{% endblock %}
 
 {% block content %}
-<div>
-    <h1>{{ company.name }}</h1>
-</div>
-{% if user.is_authenticated or user.is_staff or user.is_superuser %}
-<div>
-    <div>
-    <a href="{% url 'companies:company_edit' company.slug %}">Edit</a>
+<div class="mx-auto border p-4 mt-4" style="max-width: 700px;">
+    <div class="text-center mb-4">
+        {% if company.logo %}
+            <img src="{{ company.logo.url }}" alt="{{ company.name }} Logo" class="img-fluid mb-3" style="max-height: 150px;">
+        {% endif %}
+        <h1>{{ company.name }}</h1>
     </div>
-    <div>
-        <a href="{% url 'companies:company_delete' company.slug %}">Delete</a>
-    </div>
-</div>
 
-{% endif %}
-<div>
-    <p>{{ company.formatted_foundation_date }}</p>
-    <p>{{ company.description }}</p>
+    <div class="mb-3">
+        <strong>Founded:</strong>
+        {{ company.formatted_foundation_date|default:"Not specified" }}
+    </div>
+
+    <div class="mb-3">
+        <strong>Headquarters:</strong>
+        {{ company.location|default:"Not specified" }}
+    </div>
+
+    <div class="mb-3">
+        <strong>Address:</strong>
+        {{ company.address|default:"Not specified" }}
+    </div>
+
+    <div class="mb-3">
+        <strong>Website:</strong>
+        {% if company.website %}
+            <a href="{{ company.website }}" target="_blank">{{ company.website }}</a>
+        {% else %}
+            Not specified
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <strong>Description:</strong>
+        <p class="mb-0">{{ company.description|default:"No description provided." }}</p>
+    </div>
+
+    <div class="mb-3">
+        <strong>Industries:</strong>
+        {% if company.industries.all %}
+            {{ company.industries.all|join:", " }}
+        {% else %}
+            Not specified
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <strong>Operating Countries:</strong>
+        {% if company.operating_countries.all %}
+            {{ company.operating_countries.all|join:", " }}
+        {% else %}
+            Not specified
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <strong>Tech Stack:</strong>
+        {% if company.tech_stack.all %}
+            {{ company.tech_stack.all|join:", " }}
+        {% else %}
+            Not specified
+        {% endif %}
+    </div>
+
+    {% if user.is_authenticated or user.is_staff or user.is_superuser %}
+    <div class="text-center mt-4">
+        <a href="{% url 'companies:company_edit' company.slug %}" class="btn btn-warning me-2">Edit</a>
+        <a href="{% url 'companies:company_delete' company.slug %}" class="btn btn-outline-danger">Delete</a>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

@@ -29,6 +29,5 @@ urlpatterns = [
     path('search/', include('apps.search.urls')),
     path('news/', include('apps.news.urls')),
     path('companies/', include('apps.companies.urls')),
-    path('jobs/', include('apps.jobs.urls')),
     path('locations/', include('apps.locations.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

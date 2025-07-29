@@ -25,6 +25,11 @@ class JobPostAddView(LoginRequiredMixin, CreateView):
     form_class = JobPostForm
     template_name = 'job_listings/job_post_form.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_create'] = True
+        return context
+
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         messages.success(self.request, "Job post successfully created.")

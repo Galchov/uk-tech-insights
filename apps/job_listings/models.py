@@ -157,7 +157,7 @@ class JobPost(models.Model):
         help_text=_('Some contracts can come from abroad.')
     )
     is_active = models.BooleanField(
-        default=False,
+        default=True,
         verbose_name=_('Job Visibility'),
         help_text=_('Shows whether the job is still available.')
     )
@@ -206,18 +206,13 @@ class JobPost(models.Model):
         ]
         constraints = [
             models.CheckConstraint(check=models.Q(salary_min__lte=models.F('salary_max')), name='salary_min_lte_max'),
-            models.UniqueConstraint(
-                fields=['source', 'external_reference'],
-                name='unique_external_job',
-                condition=models.Q(source__isnull=False, external_reference__isnull=False)
-            )
         ]
     
     def __str__(self):
         return f"{self.title} at {self.company or self.company_name_raw or _('Unkown Company')}"
     
     def get_absolute_url(self):
-        return reverse('jobs:job_detail', kwargs={'slug': self.slug})
+        return reverse('job_listings:job_detail', kwargs={'slug': self.slug})
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -312,7 +307,7 @@ class JobApplication(models.Model):
         return f"{self.user.get_full_name() if self.user else self.email} -> {self.job.title}"
     
     def get_absolute_url(self):
-        return reverse('jobs:application_detail', kwargs={'pk': self.pk})
+        return reverse('jobs_listings:application_detail', kwargs={'pk': self.pk})
 
 
 class JobPostUpdateHistory(models.Model):

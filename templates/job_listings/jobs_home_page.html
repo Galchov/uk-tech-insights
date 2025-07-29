@@ -1,0 +1,18 @@
+{% extends 'common/base.html' %}
+
+{% block title %}Jobs | UK Tech Insights{% endblock %}
+
+{% block content %}
+<h1 class="text-center">Job Market</h1>
+<p class="text-center">This is the jobs center, where you can see the current status of the market</p>
+<a href="{% url 'job_listings:add_job' %}">Post Job</a>
+<div>
+    {% for job in jobs %}
+        <div>
+            <a href="{% url 'job_listings:job_detail' job.slug %}">{{ job.title }}</a>
+        </div>
+    {% empty %}
+        <p class="text-center">No jobs.</p>
+    {% endfor %}
+</div>
+{% endblock %}

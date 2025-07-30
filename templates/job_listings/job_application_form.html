@@ -1,0 +1,65 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block title %}Apply for {{ job.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mx-auto border p-4" style="max-width: 700px;">
+        <h2 class="text-center mb-4">Apply for "{{ job.title }}"</h2>
+
+        <p class="text-muted text-center mb-4">
+            {% if job.company %}{{ job.company.name }}{% elif job.company_name_raw %}{{ job.company_name_raw }}{% else %}Unknown Company{% endif %}
+        </p>
+
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="id_email" class="form-label">Email Address</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="text-danger small">{{ form.email.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="id_phone" class="form-label">Phone Number (Optional)</label>
+                {{ form.phone }}
+                {% if form.phone.errors %}
+                    <div class="text-danger small">{{ form.phone.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="id_message" class="form-label">Cover Message (Optional)</label>
+                {{ form.message }}
+                {% if form.message.errors %}
+                    <div class="text-danger small">{{ form.message.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="id_cover_letter" class="form-label">Cover Letter (Optional)</label>
+                {{ form.cover_letter }}
+                {% if form.cover_letter.errors %}
+                    <div class="text-danger small">{{ form.cover_letter.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <label for="id_cv" class="form-label">CV / Résumé</label>
+                {{ form.cv }}
+                {% if form.cv.errors %}
+                    <div class="text-danger small">{{ form.cv.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Submit Application</button>
+                <a href="{{ job.get_absolute_url }}" class="btn btn-outline-secondary ms-2">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

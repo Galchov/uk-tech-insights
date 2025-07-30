@@ -1,0 +1,106 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block content %}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">{{ job.title }}</h2>
+
+                {% if user.is_authenticated %}
+                    {% if user == job.created_by or user.is_staff or user.is_superuser %}
+                        <div class="d-flex align-items-center">
+                            <a href="{% url 'job_listings:job_edit' job.slug %}" class="btn btn-outline-primary btn-sm me-2">Edit</a>
+
+                            <form method="post" action="{% url 'job_listings:job_toggle_status' job.slug %}" class="d-inline me-2">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm {% if job.is_active %}btn-danger{% else %}btn-success{% endif %}">
+                                    {% if job.is_active %}Close Job{% else %}Reopen Job{% endif %}
+                                </button>
+                            </form>
+
+                            <span class="btn btn-sm disabled {% if job.is_active %}btn-success{% else %}btn-danger{% endif %}">
+                                {% if job.is_active %}Open{% else %}Closed{% endif %}
+                            </span>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <p class="text-muted mb-1">
+                    <strong>Published:</strong> {{ job.published_at|date:"d M Y" }} |
+                    <strong>Updated:</strong> {{ job.updated_at|date:"d M Y" }}
+                </p>
+                <p>
+                    {% if job.created_by %}
+                        <strong>Posted by:</strong> {{ job.created_by.get_full_name }}
+                    {% elif job.source %}
+                        <strong>Source:</strong> {{ job.source }} |
+                        <strong>ID:</strong> {{ job.external_reference }}
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Job Details</h5>
+                    <p><strong>Company:</strong>
+                        {% if job.company %}{{ job.company.name }}
+                        {% elif job.company_name_raw %}{{ job.company_name_raw }}
+                        {% else %}Not specified{% endif %}
+                    </p>
+                    <p><strong>Location:</strong> {{ job.location|default:"Not specified" }}</p>
+                    <p><strong>Job Type:</strong> {{ job.get_job_type_display }}</p>
+                    <p><strong>Work Mode:</strong> {{ job.get_employment_mode_display }}</p>
+                    <p><strong>Experience Level:</strong> {{ job.get_experience_level_display }}</p>
+                    <p><strong>Salary:</strong>
+                        {% if job.salary_min and job.salary_max %}
+                            {{ job.salary_min }} - {{ job.salary_max }} {{ job.currency }}
+                        {% else %}
+                            Not specified
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Description</h5>
+                    <p>{{ job.description|linebreaks }}</p>
+
+                    {% if job.requirements %}
+                        <h6 class="mt-4">Requirements</h6>
+                        <p>{{ job.requirements|linebreaks }}</p>
+                    {% endif %}
+
+                    {% if job.responsibilities %}
+                        <h6 class="mt-4">Responsibilities</h6>
+                        <p>{{ job.responsibilities|linebreaks }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{% url 'job_listings:jobs_list' %}" class="btn btn-outline-secondary">Back to Listings</a>
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'job_listings:apply' job.slug %}" class="btn btn-primary">Apply Now</a>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary">Login to Apply</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
-from .models import JobPost
+from .models import JobPost, JobApplication
 
 
 class JobPostForm(forms.ModelForm):
@@ -28,3 +28,30 @@ class JobPostForm(forms.ModelForm):
                 raise forms.ValidationError("This job has already been imported.")
 
         return cleaned_data
+
+
+class JobApplicationForm(forms.ModelForm):
+    class Meta:
+        model = JobApplication
+        fields = ['email', 'phone', 'message', 'cover_letter', 'cv']
+        widgets = {
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Your email address'
+            }),
+            'phone': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Optional phone number'
+            }),
+            'message': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Cover message (optional)',
+                'rows': 4
+            }),
+            'cover_letter': forms.ClearableFileInput(attrs={
+                'class': 'form-control'
+            }),
+            'cv': forms.ClearableFileInput(attrs={
+                'class': 'form-control'
+            }),
+        }

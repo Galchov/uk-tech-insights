@@ -148,7 +148,11 @@
             <button type="submit" class="btn btn-primary me-2">
                 {% if is_create %}Submit{% else %}Update{% endif %}
             </button>
-            <a href="{% url 'job_listings:jobs_list' %}" class="btn btn-outline-secondary">Cancel</a>
+            {% if is_create %}
+                <a href="{% url 'job_listings:jobs_list' %}" class="btn btn-outline-secondary">Cancel</a>
+            {% else %}
+                <a href="{{ job.get_absolute_url }}" class="btn btn-outline-secondary">Cancel</a>
+            {% endif %}
         </div>
     </form>
 </div>

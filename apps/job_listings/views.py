@@ -22,10 +22,13 @@ class JobPostDetailView(DetailView):
     context_object_name = 'job'
 
 
-class JobPostAddView(LoginRequiredMixin, CreateView):
+class JobPostAddView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = JobPost
     form_class = JobPostForm
     template_name = 'job_listings/job_post_form.html'
+
+    def test_func(self):
+        return self.request.user.groups.filter(name__in=['Verified User', 'Moderator', 'Admin']).exists()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -45,7 +48,7 @@ class JobPostAddView(LoginRequiredMixin, CreateView):
         return self.object.get_absolute_url()
 
 
-class JobPostUpdateView(LoginRequiredMixin, UpdateView):
+class JobPostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = JobPost
     form_class = JobPostForm
     template_name = 'job_listings/job_post_form.html'
@@ -56,11 +59,16 @@ class JobPostUpdateView(LoginRequiredMixin, UpdateView):
         context['is_create'] = False
         return context
 
-    def dispatch(self, request, *args, **kwargs):
-        obj = self.get_object()
-        if request.user != obj.created_by and not request.user.is_staff:
-            raise PermissionDenied
-        return super().dispatch(request, *args, **kwargs)
+    def test_func(self):
+        job = self.get_object()
+        user = self.request.user
+        is_verified = user.groups.filter(name='Verified User').exists()
+        is_moderator_or_admin = user.groups.filter(name__in=['Moderator', 'Admin']).exists()
+
+        return (
+            (is_verified and job.created_by == user)
+            or is_moderator_or_admin
+        )
 
     def form_valid(self, form):
         messages.success(self.request, "Job post successfully updated.")
@@ -110,7 +118,6 @@ class JobApplicationCreateView(LoginRequiredMixin, CreateView):
 class JobPostToggleStatusView(LoginRequiredMixin, UserPassesTestMixin, View):
     def post(self, request, slug, *args, **kwargs):
         job = get_object_or_404(JobPost, slug=slug)
-
         job.is_active = not job.is_active
         job.save()
 
@@ -123,8 +130,11 @@ class JobPostToggleStatusView(LoginRequiredMixin, UserPassesTestMixin, View):
 
     def test_func(self):
         job = get_object_or_404(JobPost, slug=self.kwargs['slug'])
+        user = self.request.user
+        is_verified = user.groups.filter(name='Verified User').exists()
+        is_moderator_or_admin = user.groups.filter(name__in=['Moderator', 'Admin']).exists()
+
         return (
-            self.request.user == job.created_by
-            or self.request.user.is_staff
-            or self.request.user.is_superuser
+            (is_verified and job.created_by == user)
+            or is_moderator_or_admin
         )

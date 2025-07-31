@@ -29,6 +29,7 @@ urlpatterns = [
     path('search/', include('apps.search.urls')),
     path('news/', include('apps.news.urls')),
     path('companies/', include('apps.companies.urls')),
+    path('api/', include('apps.companies.api.urls')),
     path('locations/', include('apps.locations.urls')),
     path('job_listings/', include('apps.job_listings.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

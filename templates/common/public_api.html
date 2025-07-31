@@ -1,0 +1,26 @@
+{% extends 'common/base.html' %}
+
+{% block title %}Public API{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4 text-center">Public API Endpoints</h2>
+
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+            <strong>Companies API:</strong>
+            <a href="/api/companies/" target="_blank">/api/companies/</a>
+        </li>
+        <li class="list-group-item">
+            <strong>Job Listings API:</strong>
+            <em>(Coming soon)</em>
+        </li>
+        <li class="list-group-item">
+            <strong>News API:</strong>
+            <em>(Coming soon)</em>
+        </li>
+    </ul>
+
+    <p class="mt-4 text-muted text-center">More endpoints and API documentation will be added soon.</p>
+</div>
+{% endblock %}

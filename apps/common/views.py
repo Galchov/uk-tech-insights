@@ -11,6 +11,10 @@ class HomePageView(TemplateView):
     template_name = 'common/home-page.html'
 
 
+class PublicAPIPageView(TemplateView):
+    template_name = 'common/public_api.html'
+
+
 class AddCommentView(LoginRequiredMixin, CreateView):
     model = Comment
     form_class = CommentForm

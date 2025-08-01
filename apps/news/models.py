@@ -1,116 +1,85 @@
+import uuid
 from django.db import models
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
+
+from .slug import generate_unique_slug
 
 
-class NewsArticle(models.Model):
-    MAX_SLUG_LENGTH = 100
+class BaseArticle(models.Model):
+    SLUG_MAX_LENGTH = 100
 
     class PublicationStatus(models.TextChoices):
         DRAFT = 'DRAFT', _('Draft')
         PUBLISHED = 'PUBLISHED', _('Published')
-        ARCHIVED = 'ARCHIVED', _('Archived') 
+        ARCHIVED = 'ARCHIVED', _('Archived')
 
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+        verbose_name=_('ID'),
+    )
     title = models.CharField(
         max_length=300,
         unique=True,
-        verbose_name=_('Article title'),
-        help_text=_("The main title of the article.")
+        verbose_name=_('News article title'),
     )
     slug = models.SlugField(
-        max_length=MAX_SLUG_LENGTH,
+        max_length=SLUG_MAX_LENGTH,
         unique=True,
         blank=True,
-        verbose_name=_('Slug'),
-        help_text=_("Automatically generated from the title. Used in URL."),
+        verbose_name=_('Automatically generated from the title'),
     )
     summary = models.TextField(
         blank=True,
-        verbose_name=_('Summary'),
-        help_text=_("Short summary for the article."),
+        verbose_name=_('News article summary'),
     )
     content = models.TextField(
-        verbose_name=_('Main content'),
-        help_text=_("The actual news content."),
+        verbose_name=_('News article content'),
     )
     cover_image = models.ImageField(
         upload_to='news_covers/',
         blank=True,
         null=True,
-        verbose_name=_('Cover image'),
-        help_text=_("Displayed on the top of the news article."),
-    )
-    authors = models.ManyToManyField(
-        to=settings.AUTH_USER_MODEL,
-        related_name='news_articles',
-        blank=True,
-        verbose_name=_('Article authors'),
-        help_text=_("Users credited as authors."),
+        verbose_name=_('News article poster'),
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
-        verbose_name=_("Created at"),
-        help_text=_("Date and time when the article was created."),
+        verbose_name=_('Date and time of creation'),
     )
-    publication_status = models.CharField(
-        max_length=30,
-        choices=PublicationStatus,
-        default=PublicationStatus.DRAFT,
-        db_index=True,
-        verbose_name=_("Publication status"),
-        help_text=_("Current status of the article."),
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_('Date and time of last update'),
     )
     published_at = models.DateTimeField(
         blank=True,
         null=True,
-        verbose_name=_('Published at'),
-        help_text=_("Date and time of publication."),
+        verbose_name=_('Date and time of publication'),
     )
-    updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name=_('Updated at'),
-        help_text=_("Date and time of update."),
+    publication_status = models.CharField(
+        max_length=30,
+        choices=PublicationStatus.choices,
+        default=PublicationStatus.DRAFT,
+        db_index=True,
+        verbose_name=_('Publication status'),
     )
     category = models.ForeignKey(
-        to='NewsCategory',
+        'NewsCategory',
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
-        verbose_name=_('Article category'),
-        help_text=_("One category per article."),
+        verbose_name=_('Category'),
     )
     view_count = models.PositiveIntegerField(
         default=0,
-        verbose_name=_("View count"),
-        help_text=_("Number of times the article has been viewed."),
-    )
-    source_name = models.CharField(
-        max_length=200,
-        blank=True,
-        verbose_name=_('External source name'),
-        help_text=_("Name of the original source if this article was scraped or referenced from another website. Not registered.")
-    )
-    source_url = models.URLField(
-        blank=True,
-        null=True,
-        verbose_name=_('Source URL'),
-        help_text=_("URL of the original source if this article was scraped or referenced from another website. Not registered."),
-    )
-    source = models.ForeignKey(
-        to='NewsSource',
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name='articles',
-        verbose_name=_('Source'),
-        help_text=_("Structured reference to a known registered source."),
+        verbose_name=_('Views count'),
     )
 
     class Meta:
-        verbose_name = _('News Article')
-        verbose_name_plural = _('News Articles')
+        abstract = True
         ordering = ['-published_at', '-created_at']
         indexes = [
             models.Index(fields=['slug']),
@@ -120,63 +89,102 @@ class NewsArticle(models.Model):
 
     def __str__(self):
         return self.title
-
+    
     def save(self, *args, **kwargs):
         if not self.slug:
-            base_slug = slugify(self.title).lower()[:self.MAX_SLUG_LENGTH]
-            slug = base_slug
-            counter = 1
+            self.slug = generate_unique_slug(
+                instance=self,
+                field_value=self.title,
+                slug_field_name='slug',
+                max_length=self._meta.get_field('slug').max_length,
+                suffix_length=6,
+            )
 
-            while NewsArticle.objects.exclude(pk=self.pk).filter(slug=slug).exists():
-                suffix = f"-{counter}"
-                allowed_length = self.MAX_SLUG_LENGTH - len(suffix)
-                slug = f"{base_slug[:allowed_length]}{suffix}"
-                counter += 1
+        super().save(*args, **kwargs)
 
-            self.slug = slug
 
-        return super().save(*args, **kwargs)
+class InternalArticle(BaseArticle):
+    authors = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        related_name='internal_articles',
+        verbose_name=_('News article authors'),
+    )
+
+    class Meta:
+        verbose_name = _('Internal Article')
+        verbose_name_plural = _('Internal Articles')
     
     def get_absolute_url(self):
-        return reverse('news:article_detail', kwargs={'slug': self.slug})
+        return reverse('news:internal_article_detail', kwargs={'slug': self.slug})
 
+
+class ExternalArticle(BaseArticle):
+    image_url = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name=_('URL to image'),
+    )
+    source_name = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name=_('Source name'),
+    )
+    source_url = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name=_('Source URL'),
+    )
+    source = models.ForeignKey(
+        'NewsSource',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='external_sources',
+        verbose_name=_('Source object'),
+    )
+
+    class Meta:
+        verbose_name = _('External Article')
+        verbose_name_plural = _('External Articles')
+    
+    def get_absolute_url(self):
+        return reverse('news:external_article_detail', kwargs={'slug': self.slug})
+    
 
 class NewsCategory(models.Model):
     name = models.CharField(
         max_length=80,
-        verbose_name=_('Category name'),
-        help_text=_("News article category."),
+        verbose_name=_('Name'),
     )
     slug = models.SlugField(
         max_length=100,
         unique=True,
-        verbose_name=_('Slug'),
-        help_text=_("Slug if needed for category modification."),
+        verbose_name=_('Automatically generated from the name'),
     )
     description = models.TextField(
         blank=True,
         verbose_name=_('Description'),
-        help_text=_("Description of the category. Optional."),
     )
 
     class Meta:
-        verbose_name = _("News Category")
-        verbose_name_plural = _("News Categories")
+        verbose_name = _('News Category')
+        verbose_name_plural = _('News Categories')
         ordering = ['name']
-
+    
     def __str__(self):
         return self.name
-
+    
     def save(self, *args, **kwargs):
         if not self.slug:
-            base_slug = slugify(self.name).lower()
+            base_slug = slugify(self.name)
             slug = base_slug
             counter = 1
 
             while NewsCategory.objects.exclude(pk=self.pk).filter(slug=slug).exists():
-                self.slug = f"{base_slug}-{counter}"
+                slug = f"{base_slug}-{counter}"
                 counter += 1
-
+            
             self.slug = slug
 
         return super().save(*args, **kwargs)
@@ -188,22 +196,18 @@ class NewsCategory(models.Model):
 class NewsSource(models.Model):
     name = models.CharField(
         max_length=100,
-        verbose_name=_('Source name'),
-        help_text=_("Name of the article source."),
+        verbose_name=_('Name'),
     )
     base_url = models.URLField(
         verbose_name=_('Source URL'),
-        help_text=_("URL of the article source."),
     )
     scrape_allowed = models.BooleanField(
         default=False,
         verbose_name=_('Scrape allowed'),
-        help_text=_("Indicates whether it is allowed to scrape from that particular source."),
     )
     notes = models.TextField(
         blank=True,
         verbose_name=_('Notes'),
-        help_text=_("Additional information about the source. Optional."),
     )
 
     class Meta:
@@ -213,4 +217,3 @@ class NewsSource(models.Model):
 
     def __str__(self):
         return self.name
-    

@@ -1,19 +1,41 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.shortcuts import get_object_or_404
+from django.views import View
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
+from itertools import chain
+from operator import attrgetter
 
-# from .models import NewsArticle, NewsCategory, NewsSource
-# from .forms import NewsArticleForm
+from .models import InternalArticle, ExternalArticle, NewsCategory, NewsSource
+from .forms import InternalArticleForm
 
 
-# class NewsArticleListView(ListView):
-#     model = NewsArticle
-#     template_name = 'news/article_list.html'
-#     context_object_name = 'articles'
-#     paginate_by = 10
-#     queryset = NewsArticle.objects.filter(publication_status=NewsArticle.PublicationStatus.PUBLISHED)
+class ArticleListView(View):
+    template_name = 'news/article_list.html'
 
+    def get(self, request, *args, **kwargs):
+        internal_article = InternalArticle.objects.filter(publication_status='PUBLISHED')
+        external_article = ExternalArticle.objects.filter(publication_status='PUBLISHED')
+
+        articles = sorted(
+            chain(internal_article, external_article),
+            key=attrgetter('published_at'),
+            reverse=True,
+        )
+
+        context = {
+            'articles': articles,
+        }
+
+        return render(request, self.template_name, context)
+    
+
+class InternalArticleCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    model = InternalArticle
+    form_class = InternalArticleForm
+    template_name = 'news/article_form.html'
+    permission_required = 'news.add_internalarticle'
+    
 
 # class NewsArticleDetailView(DetailView):
 #     model = NewsArticle
@@ -66,17 +88,6 @@ from django.urls import reverse_lazy
 #         context = super().get_context_data(**kwargs)
 #         context['source'] = self.source
 #         return context
-
-
-# class NewsArticleCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
-#     model = NewsArticle
-#     form_class = NewsArticleForm
-#     template_name = 'news/article_form.html'
-#     permission_required = 'news.add_newsarticle'
-
-#     def form_valid(self, form):
-#         form.instance.created_by = self.request.user
-#         return super().form_valid(form)
 
 
 # class NewsArticleUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, UpdateView):

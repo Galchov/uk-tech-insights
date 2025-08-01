@@ -2,10 +2,10 @@
 {% block title %}{{ view.object|default:"New" }} Article{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container py-4">
   <h1 class="mb-4">{{ view.object|default:"New" }} Article</h1>
 
-  <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.non_field_errors }}
 

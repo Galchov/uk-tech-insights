@@ -22,10 +22,10 @@
 
   <div class="d-flex gap-2">
     {% if request.user == article.created_by or request.user.is_staff %}
-      <a href="{% url 'news:article_edit' article.slug %}" class="btn btn-outline-secondary">Edit</a>
+      <a href="#" class="btn btn-outline-secondary">Edit</a>
     {% endif %}
     {% if request.user.is_staff %}
-      <a href="{% url 'news:article_delete' article.slug %}" class="btn btn-outline-danger">Delete</a>
+      <a href="#" class="btn btn-outline-danger">Delete</a>
     {% endif %}
   </div>
 </div>

@@ -9,7 +9,7 @@ from .slug import generate_unique_slug
 
 
 class BaseArticle(models.Model):
-    SLUG_MAX_LENGTH = 100
+    SLUG_MAX_LENGTH = 300
 
     class PublicationStatus(models.TextChoices):
         DRAFT = 'DRAFT', _('Draft')
@@ -40,12 +40,6 @@ class BaseArticle(models.Model):
     content = models.TextField(
         verbose_name=_('News article content'),
     )
-    cover_image = models.ImageField(
-        upload_to='news_covers/',
-        blank=True,
-        null=True,
-        verbose_name=_('News article poster'),
-    )
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_('Date and time of creation'),
@@ -67,7 +61,7 @@ class BaseArticle(models.Model):
         verbose_name=_('Publication status'),
     )
     category = models.ForeignKey(
-        'NewsCategory',
+        to='NewsCategory',
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
@@ -105,10 +99,16 @@ class BaseArticle(models.Model):
 
 class InternalArticle(BaseArticle):
     authors = models.ManyToManyField(
-        settings.AUTH_USER_MODEL,
+        to=settings.AUTH_USER_MODEL,
         blank=True,
         related_name='internal_articles',
         verbose_name=_('News article authors'),
+    )
+    cover_image = models.ImageField(
+        upload_to='news_covers/',
+        blank=True,
+        null=True,
+        verbose_name=_('News article poster'),
     )
 
     class Meta:
@@ -121,22 +121,24 @@ class InternalArticle(BaseArticle):
 
 class ExternalArticle(BaseArticle):
     image_url = models.URLField(
+        max_length=1000,
         blank=True,
         null=True,
         verbose_name=_('URL to image'),
     )
     source_name = models.CharField(
-        max_length=200,
+        max_length=300,
         blank=True,
         verbose_name=_('Source name'),
     )
     source_url = models.URLField(
+        max_length=1000,
         blank=True,
         null=True,
         verbose_name=_('Source URL'),
     )
     source = models.ForeignKey(
-        'NewsSource',
+        to='NewsSource',
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
@@ -195,7 +197,7 @@ class NewsCategory(models.Model):
 
 class NewsSource(models.Model):
     name = models.CharField(
-        max_length=100,
+        max_length=300,
         verbose_name=_('Name'),
     )
     base_url = models.URLField(

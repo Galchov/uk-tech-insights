@@ -181,3 +181,8 @@ LOGOUT_REIDRECT_URL = '/login/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+# API
+
+NEWS_API_KEY = config('NEWS_API_KEY')

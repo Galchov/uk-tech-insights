@@ -2,26 +2,51 @@
 {% block title %}{{ article.title }} | News{% endblock %}
 
 {% block content %}
-<div class="container">
-  <h1 class="mb-3">{{ article.title }}</h1>
+<div class="container my-5">
+  <div class="mb-4 border-bottom pb-2">
+    <h1 class="mb-3">{{ article.title }}</h1>
 
-  <p class="text-muted small mb-2">
-    {% for author in article.authors.all %}
-      {{ author.get_full_name|default:author.username }}{% if not forloop.last %}, {% endif %}
-    {% empty %}Unknown{% endfor %}
-    • {{ article.created_at|date:"Y-m-d" }}
-  </p>
+    <p class="text-muted mb-2 small">
+      {% if article.authors.all %}
+        By 
+        {% for author in article.authors.all %}
+          {{ author.get_full_name|default:author.username }}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+      {% elif article.source_name %}
+        Source: {{ article.source_name }}
+      {% else %}
+        Unknown author
+      {% endif %}
+      • {{ article.published_at|date:"d M Y" }} 
+      {% if article.category %} • Category: {{ article.category }}{% endif %}
+      • Views: {{ article.view_count }}
+    </p>
+  </div>
 
   {% if article.cover_image %}
-    <img src="{{ article.cover_image.url }}" alt="{{ article.title }}" class="img-fluid mb-4">
+    <div class="mb-4 text-center">
+      <img src="{{ article.cover_image.url }}" alt="{{ article.title }}" class="img-fluid rounded shadow-sm">
+    </div>
+  {% elif article.image_url %}
+    <div class="mb-4 text-center">
+      <img src="{{ article.image_url }}" alt="{{ article.title }}" class="img-fluid rounded shadow-sm">
+    </div>
   {% endif %}
 
   <div class="mb-5">
     {{ article.content|linebreaks }}
   </div>
 
+  {% if article.source_url %}
+    <div class="mb-4">
+      <a href="{{ article.source_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary">
+        Read original article
+      </a>
+    </div>
+  {% endif %}
+
   <div class="d-flex gap-2">
-    {% if request.user == article.created_by or request.user.is_staff %}
+    {% if request.user == article.created_by or request.user in article.authors.all or request.user.is_staff %}
       <a href="#" class="btn btn-outline-secondary">Edit</a>
     {% endif %}
     {% if request.user.is_staff %}

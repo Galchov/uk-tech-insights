@@ -6,7 +6,7 @@ app_name = 'news'
 urlpatterns = [
     path('', views.ArticleListView.as_view(), name='article_list'),
     path('article/create/', views.InternalArticleCreateView.as_view(), name='article_create'),
-    # path('article/<slug:slug>/', views.NewsArticleDetailView.as_view(), name='article_detail'),
+    path('article/<slug:slug>/', views.NewsArticleDetailView.as_view(), name='article_detail'),
     # path('article/<slug:slug>/edit/', views.NewsArticleUpdateView.as_view(), name='article_edit'),
     # path('article/<slug:slug>/delete/', views.NewsArticleDeleteView.as_view(), name='article_delete'),
 

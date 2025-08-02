@@ -37,19 +37,19 @@ class InternalArticleCreateView(LoginRequiredMixin, PermissionRequiredMixin, Cre
     permission_required = 'news.add_internalarticle'
     
 
-# class NewsArticleDetailView(DetailView):
-#     model = NewsArticle
-#     template_name = 'news/article_detail.html'
-#     context_object_name = 'article'
-#     slug_field = 'slug'
-#     slug_url_kwarg = 'slug'
+class NewsArticleDetailView(DetailView):
+    model = ExternalArticle
+    template_name = 'news/article_detail.html'
+    context_object_name = 'article'
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
 
-#     def get_queryset(self):
-#         qs = NewsArticle.objects.all()
+    def get_queryset(self):
+        qs = ExternalArticle.objects.all()
 
-#         if not self.request.user.is_staff:
-#             qs = qs.filter(publication_status=NewsArticle.PublicationStatus.PUBLISHED)
-#         return qs
+        if not self.request.user.is_staff:
+            qs = qs.filter(publication_status=ExternalArticle.PublicationStatus.PUBLISHED)
+        return qs
 
 
 # class NewsByCategoryListView(ListView):

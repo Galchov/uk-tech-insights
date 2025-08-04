@@ -11,6 +11,10 @@ from .slug import generate_unique_slug
 class BaseArticle(models.Model):
     SLUG_MAX_LENGTH = 300
 
+    class ArticleType(models.TextChoices):
+        INTERNAL = 'INTERNAL', _('Internal')
+        EXTERNAL = 'EXTERNAL', _('External')
+
     class PublicationStatus(models.TextChoices):
         DRAFT = 'DRAFT', _('Draft')
         PUBLISHED = 'PUBLISHED', _('Published')
@@ -21,6 +25,12 @@ class BaseArticle(models.Model):
         default=uuid.uuid4,
         editable=False,
         verbose_name=_('ID'),
+    )
+    article_type = models.CharField(
+        max_length=20,
+        choices=ArticleType.choices,
+        editable=False,
+        db_index=True,
     )
     title = models.CharField(
         max_length=300,
@@ -114,6 +124,11 @@ class InternalArticle(BaseArticle):
     class Meta:
         verbose_name = _('Internal Article')
         verbose_name_plural = _('Internal Articles')
+
+    def save(self, *args, **kwargs):
+        if not self.article_type:
+            self.article_type = self.ArticleType.INTERNAL
+        super().save(*args, **kwargs)
     
     def get_absolute_url(self):
         return reverse('news:internal_article_detail', kwargs={'slug': self.slug})
@@ -154,6 +169,11 @@ class ExternalArticle(BaseArticle):
     class Meta:
         verbose_name = _('External Article')
         verbose_name_plural = _('External Articles')
+
+    def save(self, *args, **kwargs):
+        if not self.article_type:
+            self.article_type = self.ArticleType.EXTERNAL
+        super().save(*args, **kwargs)
     
     def get_absolute_url(self):
         return reverse('news:external_article_detail', kwargs={'slug': self.slug})

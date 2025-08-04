@@ -1,0 +1,33 @@
+{% extends 'common/base.html' %}
+
+{% block title %}Review Articles{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4">Unpublished Internal Articles</h1>
+
+  {% if articles %}
+    <ul class="list-group">
+      {% for article in articles %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <strong>{{ article.title }}</strong>
+            <small class="text-muted ms-2">{{ article.created_at|date:"Y-m-d H:i" }}</small>
+          </div>
+          <div>
+            <a href="{% url 'news:article_detail' article.slug %}" class="btn btn-sm btn-outline-primary">View</a>
+            <a href="{% url 'news:internal_article_edit' article.slug %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+            <a href="{% url 'news:internal_article_delete' article.slug %}" class="btn btn-sm btn-outline-danger">Delete</a>
+            <form method="post" action="{% url 'news:internal_article_publish' article.slug %}" class="d-inline">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-success">Publish</button>
+            </form>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No articles pending review.</p>
+  {% endif %}
+</div>
+{% endblock %}

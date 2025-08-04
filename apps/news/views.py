@@ -1,11 +1,13 @@
+from itertools import chain
+from operator import attrgetter
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.contrib.contenttypes.models import ContentType
+from django.contrib import messages
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views import View
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
-from itertools import chain
-from operator import attrgetter
+from django.utils import timezone
 
 from .models import InternalArticle, ExternalArticle, NewsCategory, NewsSource
 from .forms import InternalArticleForm
@@ -14,6 +16,9 @@ from apps.common.forms import CommentForm
 
 
 class ArticleListView(View):
+    """
+    Displays all articles internal and external with status 'PUBLISHED'.
+    """
     template_name = 'news/article_list.html'
 
     def get(self, request, *args, **kwargs):
@@ -34,6 +39,9 @@ class ArticleListView(View):
     
 
 class InternalArticleCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    """
+    The qualified users can create their own articles.
+    """
     model = InternalArticle
     form_class = InternalArticleForm
     template_name = 'news/article_form.html'
@@ -41,6 +49,10 @@ class InternalArticleCreateView(LoginRequiredMixin, PermissionRequiredMixin, Cre
     
 
 class NewsArticleDetailView(View):
+    """
+    Common view for both Internal and External articles.
+    
+    """
     template_name = 'news/article_detail.html'
     context_object_name = 'article'
     
@@ -98,6 +110,44 @@ class NewsArticleDetailView(View):
         }
 
         return render(request, self.template_name, context)
+
+
+class InternalArticleModerationListView(PermissionRequiredMixin, ListView):
+    model = InternalArticle
+    template_name = 'news/internal_article_moderation_list.html'
+    context_object_name = 'articles'
+    permission_required = 'news.change_internalarticle'
+
+    def get_queryset(self):
+        return InternalArticle.objects.filter(
+            publication_status=InternalArticle.PublicationStatus.DRAFT
+        )
+
+
+class InternalArticlePublishView(PermissionRequiredMixin, View):
+    permission_required = 'news.change_internalarticle'
+
+    def post(self, request, slug, *args, **kwargs):
+        article = get_object_or_404(InternalArticle, slug=slug)
+        article.publication_status = InternalArticle.PublicationStatus.PUBLISHED
+        article.published_at = timezone.now()
+        article.save()
+        messages.success(request, f"Article '{article.title}' published successfully.")
+        return redirect('news:internal_article_pending')
+    
+
+class InternalArticleUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    model = InternalArticle
+    form_class = InternalArticleForm
+    template_name = 'news/article_form.html'
+    permission_required = 'news.change_internalarticle'
+    
+
+class InternalArticleDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    model = InternalArticle
+    template_name = 'news/article_confirm_delete.html'
+    success_url = reverse_lazy('news:internal_article_pending')
+    permission_required = 'news.delete_internalarticle'
 
 
 # class NewsByCategoryListView(ListView):

@@ -145,6 +145,11 @@ class ExternalArticle(BaseArticle):
         related_name='external_sources',
         verbose_name=_('Source object'),
     )
+    author = models.CharField(
+        max_length=150,
+        blank=True,
+        verbose_name=_('Author'),
+    )
 
     class Meta:
         verbose_name = _('External Article')

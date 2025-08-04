@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views import View
 from django.shortcuts import get_object_or_404, render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 
 from .models import InternalArticle, ExternalArticle, NewsCategory, NewsSource
@@ -16,9 +16,6 @@ from apps.common.forms import CommentForm
 
 
 class ArticleListView(View):
-    """
-    Displays all articles internal and external with status 'PUBLISHED'.
-    """
     template_name = 'news/article_list.html'
 
     def get(self, request, *args, **kwargs):
@@ -38,21 +35,7 @@ class ArticleListView(View):
         return render(request, self.template_name, context)
     
 
-class InternalArticleCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
-    """
-    The qualified users can create their own articles.
-    """
-    model = InternalArticle
-    form_class = InternalArticleForm
-    template_name = 'news/article_form.html'
-    permission_required = 'news.add_internalarticle'
-    
-
 class NewsArticleDetailView(View):
-    """
-    Common view for both Internal and External articles.
-    
-    """
     template_name = 'news/article_detail.html'
     context_object_name = 'article'
     
@@ -61,8 +44,8 @@ class NewsArticleDetailView(View):
         external_qs = ExternalArticle.objects.all()
 
         if not user.is_staff:
-            internal_qs = InternalArticle.objects.filter(publication_status=InternalArticle.publication_status.PUBLISHED)
-            external_qs = ExternalArticle.objects.filter(publication_status=ExternalArticle.publication_status.PUBLISHED)
+            internal_qs = InternalArticle.objects.filter(publication_status=InternalArticle.PublicationStatus.PUBLISHED)
+            external_qs = ExternalArticle.objects.filter(publication_status=ExternalArticle.PublicationStatus.PUBLISHED)
 
         try:
             return internal_qs.get(slug=slug)
@@ -82,6 +65,7 @@ class NewsArticleDetailView(View):
             'article': article,
             'comments': comments,
             'form': form,
+            'is_moderator': request.user.groups.filter(name='Moderators').exists() if request.user.is_authenticated else False,
         }
 
         return render(request, self.template_name, context)
@@ -110,6 +94,18 @@ class NewsArticleDetailView(View):
         }
 
         return render(request, self.template_name, context)
+
+
+class InternalArticleCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    model = InternalArticle
+    form_class = InternalArticleForm
+    template_name = 'news/article_form.html'
+    permission_required = 'news.add_internalarticle'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cancel_url'] = reverse('news:article_list')
+        return context
 
 
 class InternalArticleModerationListView(PermissionRequiredMixin, ListView):
@@ -141,6 +137,20 @@ class InternalArticleUpdateView(LoginRequiredMixin, PermissionRequiredMixin, Upd
     form_class = InternalArticleForm
     template_name = 'news/article_form.html'
     permission_required = 'news.change_internalarticle'
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        article = self.object
+
+        if article.publication_status == InternalArticle.PublicationStatus.PUBLISHED:
+            context['cancel_url'] = article.get_absolute_url()
+        else:
+            context['cancel_url'] = reverse('news:internal_article_pending')
+
+        return context
     
 
 class InternalArticleDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
@@ -148,6 +158,22 @@ class InternalArticleDeleteView(LoginRequiredMixin, PermissionRequiredMixin, Del
     template_name = 'news/article_confirm_delete.html'
     success_url = reverse_lazy('news:internal_article_pending')
     permission_required = 'news.delete_internalarticle'
+
+
+class InternalArticleUnpublishView(PermissionRequiredMixin, View):
+    permission_required = 'news.change_internalarticle'
+
+    def post(self, request, slug, *args, **kwargs):
+        article = get_object_or_404(InternalArticle, slug=slug)
+
+        if article.publication_status == InternalArticle.PublicationStatus.PUBLISHED:
+            article.publication_status = InternalArticle.PublicationStatus.DRAFT
+            article.save()
+            messages.success(request, f"Article '{article.title}' was unpublished.")
+        else:
+            messages.info(request, f"Article '{article.title}' is already a draft.")
+
+        return redirect(article.get_absolute_url())
 
 
 # class NewsByCategoryListView(ListView):

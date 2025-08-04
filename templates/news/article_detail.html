@@ -58,14 +58,36 @@
     </div>
   {% endif %}
 
-  <div class="d-flex gap-2">
+  <div class="d-flex flex-wrap gap-2">
+    {# Edit button: authors, creator, or staff #}
     {% if article.article_type == 'INTERNAL' and request.user in article.authors.all %}
-      <a href="#" class="btn btn-outline-secondary">Edit</a>
+      <a href="{% url 'news:internal_article_edit' article.slug %}" class="btn btn-outline-secondary">Edit</a>
     {% elif request.user == article.created_by or request.user.is_staff %}
-      <a href="#" class="btn btn-outline-secondary">Edit</a>
+      <a href="{% url 'news:internal_article_edit' article.slug %}" class="btn btn-outline-secondary">Edit</a>
     {% endif %}
+
+    {# Delete button: staff only #}
     {% if request.user.is_staff %}
-      <a href="#" class="btn btn-outline-danger">Delete</a>
+      <a href="{% url 'news:internal_article_delete' article.slug %}" class="btn btn-outline-danger">Delete</a>
+    {% endif %}
+
+    {# Unpublish button: staff or moderator only, for published internal articles #}
+    {% if article.article_type == 'INTERNAL' and article.publication_status == 'PUBLISHED' %}
+      {% if request.user.is_staff or is_moderator %}
+        <form method="post" action="{% url 'news:internal_article_unpublish' article.slug %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-warning">Unpublish</button>
+        </form>
+      {% endif %}
+    {% endif %}
+
+    {# Back to draft review list: shown for DRAFT articles to moderators/staff #}
+    {% if article.article_type == 'INTERNAL' and article.publication_status == 'DRAFT' %}
+      {% if request.user.is_authenticated %}
+        {% if request.user.is_staff or is_moderator %}
+          <a href="{% url 'news:internal_article_pending' %}" class="btn btn-outline-secondary">Back to Review List</a>
+        {% endif %}
+      {% endif %}
     {% endif %}
   </div>
 

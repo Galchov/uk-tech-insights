@@ -28,6 +28,7 @@ urlpatterns = [
     path('learning/', include('apps.learning.urls')),
     path('search/', include('apps.search.urls')),
     path('news/', include('apps.news.urls')),
+    path('api/news/', include('apps.news.api.urls')),
     path('companies/', include('apps.companies.urls')),
     path('api/', include('apps.companies.api.urls')),
     path('locations/', include('apps.locations.urls')),

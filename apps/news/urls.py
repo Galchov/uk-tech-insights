@@ -11,9 +11,9 @@ urlpatterns = [
     path('internal/pending/', views.InternalArticleModerationListView.as_view(), name='internal_article_pending'),
     path('internal/<slug:slug>/publish/', views.InternalArticlePublishView.as_view(), name='internal_article_publish'),
     path('internal/<slug:slug>/edit/', views.InternalArticleUpdateView.as_view(), name='internal_article_edit'),
-    path('internal/<slug:slug>/delete/', views.InternalArticleDeleteView.as_view(), name='internal_article_delete'),
     path('internal/<slug:slug>/unpublish/', views.InternalArticleUnpublishView.as_view(), name='internal_article_unpublish'),
 
+    path('article/<slug:slug>/delete/', views.NewsArticleDeleteView.as_view(), name='article_delete'),
     # path('article/<slug:slug>/edit/', views.NewsArticleUpdateView.as_view(), name='article_edit'),
     # path('article/<slug:slug>/delete/', views.NewsArticleDeleteView.as_view(), name='article_delete'),
 

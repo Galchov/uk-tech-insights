@@ -68,7 +68,7 @@
 
     {# Delete button: staff only #}
     {% if request.user.is_staff %}
-      <a href="{% url 'news:internal_article_delete' article.slug %}" class="btn btn-outline-danger">Delete</a>
+      <a href="{% url 'news:article_delete' article.slug %}" class="btn btn-outline-danger">Delete</a>
     {% endif %}
 
     {# Unpublish button: staff or moderator only, for published internal articles #}

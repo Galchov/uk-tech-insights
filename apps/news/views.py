@@ -151,14 +151,6 @@ class InternalArticleUpdateView(LoginRequiredMixin, PermissionRequiredMixin, Upd
             context['cancel_url'] = reverse('news:internal_article_pending')
 
         return context
-    
-
-class InternalArticleDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
-    model = InternalArticle
-    template_name = 'news/article_confirm_delete.html'
-    success_url = reverse_lazy('news:internal_article_pending')
-    permission_required = 'news.delete_internalarticle'
-
 
 class InternalArticleUnpublishView(PermissionRequiredMixin, View):
     permission_required = 'news.change_internalarticle'
@@ -176,64 +168,29 @@ class InternalArticleUnpublishView(PermissionRequiredMixin, View):
         return redirect(article.get_absolute_url())
 
 
-# class NewsByCategoryListView(ListView):
-#     model = NewsArticle
-#     template_name = 'news/article_list_by_category.html'
-#     context_object_name = 'articles'
-#     paginate_by = 10
+class NewsArticleDeleteView(View):
+    template_name = 'news/article_confirm_delete.html'
 
-#     def get_queryset(self):
-#         self.category = get_object_or_404(NewsCategory, slug=self.kwargs['slug'])
-#         return NewsArticle.objects.filter(
-#             category=self.category,
-#             status=NewsArticle.PublicationStatus.PUBLISHED
-#         ).order_by('-created_at')
+    def get_article(self, slug, user):
+        internal_qs = InternalArticle.objects.all()
+        external_qs = ExternalArticle.objects.all()
 
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['category'] = self.category
-#         return context
+        if not user.is_staff:
+            internal_qs = internal_qs.filter(publication_status=InternalArticle.PublicationStatus.PUBLISHED)
+            external_qs = external_qs.filter(publication_status=ExternalArticle.PublicationStatus.PUBLISHED)
 
+        try:
+            return internal_qs.get(slug=slug)
+        except InternalArticle.DoesNotExist:
+            return get_object_or_404(external_qs, slug=slug)
 
-# class NewsBySourceListView(ListView):
-#     model = NewsArticle
-#     template_name = 'news/article_list_by_source.html'
-#     context_object_name = 'articles'
-#     paginate_by = 10
+    def get(self, request, slug):
+        article = self.get_article(slug, request.user)
+        return render(request, self.template_name, {'object': article})
 
-#     def get_queryset(self):
-#         self.source = get_object_or_404(NewsSource, slug=self.kwargs['slug'])
-#         return NewsArticle.objects.filter(
-#             source=self.source,
-#             status=NewsArticle.PublicationStatus.PUBLISHED
-#         ).order_by('-created_at')
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['source'] = self.source
-#         return context
-
-
-# class NewsArticleUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, UpdateView):
-#     model = NewsArticle
-#     form_class = NewsArticleForm
-#     template_name = 'news/article_form.html'
-#     slug_field = 'slug'
-#     slug_url_kwarg = 'slug'
-#     permission_required = 'news.change_newsarticle'
-
-#     def test_func(self):
-#         article = self.get_object()
-#         return self.request.user in article.authors.all() or self.request.user.is_staff
-
-
-# class NewsArticleDeleteView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, DeleteView):
-#     model = NewsArticle
-#     template_name = 'news/article_confirm_delete.html'
-#     success_url = reverse_lazy('news:article_list')
-#     slug_field = 'slug'
-#     slug_url_kwarg = 'slug'
-#     permission_required = 'news.delete_newsarticle'
-
-#     def test_func(self):
-#         return self.request.user.is_staff or self.request.user.groups.filter(name__in=['Moderators']).exists()
+    def post(self, request, slug):
+        article = self.get_article(slug, request.user)
+        if request.user.is_authenticated and (request.user == getattr(article, 'created_by', None) or request.user.is_staff or request.user.groups.filter(name='Moderators').exists()):
+            article.delete()
+            return redirect('news:article_list')
+        return redirect('news:article_detail', slug=article.slug)

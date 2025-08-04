@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.conf import settings
 from django.utils.text import slugify
+from django.utils import timezone
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.fields import GenericRelation
@@ -133,10 +134,14 @@ class InternalArticle(BaseArticle):
     def save(self, *args, **kwargs):
         if not self.article_type:
             self.article_type = self.ArticleType.INTERNAL
+
+        if self.publication_status == self.PublicationStatus.PUBLISHED and not self.published_at:
+            self.published_at = timezone.now()
+            
         super().save(*args, **kwargs)
     
     def get_absolute_url(self):
-        return reverse('news:internal_article_detail', kwargs={'slug': self.slug})
+        return reverse('news:article_detail', kwargs={'slug': self.slug})
 
 
 class ExternalArticle(BaseArticle):
@@ -181,7 +186,7 @@ class ExternalArticle(BaseArticle):
         super().save(*args, **kwargs)
     
     def get_absolute_url(self):
-        return reverse('news:external_article_detail', kwargs={'slug': self.slug})
+        return reverse('news:article_detail', kwargs={'slug': self.slug})
     
 
 class NewsCategory(models.Model):

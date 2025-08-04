@@ -1,3 +1,4 @@
+from uuid import UUID
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
@@ -72,7 +73,7 @@ class Comment(models.Model):
         ContentType,
         on_delete=models.CASCADE,
     )
-    object_id = models.PositiveIntegerField()
+    object_id = models.TextField()
     content_object = GenericForeignKey()
 
     content = models.TextField(

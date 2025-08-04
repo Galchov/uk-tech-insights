@@ -1,13 +1,16 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
+from django.contrib.contenttypes.models import ContentType
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views import View
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
 from itertools import chain
 from operator import attrgetter
 
 from .models import InternalArticle, ExternalArticle, NewsCategory, NewsSource
 from .forms import InternalArticleForm
+from apps.common.models import Comment
+from apps.common.forms import CommentForm
 
 
 class ArticleListView(View):
@@ -37,19 +40,64 @@ class InternalArticleCreateView(LoginRequiredMixin, PermissionRequiredMixin, Cre
     permission_required = 'news.add_internalarticle'
     
 
-class NewsArticleDetailView(DetailView):
-    model = ExternalArticle
+class NewsArticleDetailView(View):
     template_name = 'news/article_detail.html'
     context_object_name = 'article'
-    slug_field = 'slug'
-    slug_url_kwarg = 'slug'
+    
+    def get_artcile(self, slug, user):
+        internal_qs = InternalArticle.objects.all()
+        external_qs = ExternalArticle.objects.all()
 
-    def get_queryset(self):
-        qs = ExternalArticle.objects.all()
+        if not user.is_staff:
+            internal_qs = InternalArticle.objects.filter(publication_status=InternalArticle.publication_status.PUBLISHED)
+            external_qs = ExternalArticle.objects.filter(publication_status=ExternalArticle.publication_status.PUBLISHED)
 
-        if not self.request.user.is_staff:
-            qs = qs.filter(publication_status=ExternalArticle.PublicationStatus.PUBLISHED)
-        return qs
+        try:
+            return internal_qs.get(slug=slug)
+        except InternalArticle.DoesNotExist:
+            return get_object_or_404(external_qs, slug=slug)
+
+
+    def get(self, request, slug):
+        article = self.get_artcile(slug, request.user)
+
+        content_type = ContentType.objects.get_for_model(article.__class__)
+        comments = Comment.objects.filter(content_type=content_type, object_id=article.pk).order_by('-created_at')
+
+        form = CommentForm()
+
+        context = {
+            'article': article,
+            'comments': comments,
+            'form': form,
+        }
+
+        return render(request, self.template_name, context)
+
+    def post(self, request, slug):
+        if not request.user.is_authenticated:
+            return redirect('login')
+        
+        article = self.get_artcile(slug, request.user)
+        form = CommentForm(request.POST)
+
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.content_object = article
+            comment.save()
+            return redirect(request.path)
+        
+        content_type = ContentType.objects.get_for_model(article.__class__)
+        comments = Comment.objects.filter(content_type=content_type, object_id=article.pk)
+
+        context = {
+            'article': article,
+            'comments': comments,
+            'form': form,
+        }
+
+        return render(request, self.template_name, context)
 
 
 # class NewsByCategoryListView(ListView):

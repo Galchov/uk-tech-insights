@@ -4,8 +4,10 @@ from django.conf import settings
 from django.utils.text import slugify
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.contrib.contenttypes.fields import GenericRelation
 
 from .slug import generate_unique_slug
+from apps.common.models import Comment, Star, TaggedItem
 
 
 class BaseArticle(models.Model):
@@ -81,6 +83,9 @@ class BaseArticle(models.Model):
         default=0,
         verbose_name=_('Views count'),
     )
+    comments = GenericRelation(Comment)
+    stars = GenericRelation(Star)
+    tags = GenericRelation(TaggedItem)
 
     class Meta:
         abstract = True

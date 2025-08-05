@@ -1,5 +1,4 @@
 {% extends 'common/base.html' %}
-
 {% block title %}News API{% endblock %}
 
 {% block content %}
@@ -7,27 +6,106 @@
   <h2 class="mb-4 text-center">News API Endpoints</h2>
 
   <div class="table-responsive">
-    <table class="table table-bordered table-hover">
+    <table class="table table-bordered table-hover table-sm align-middle">
       <thead class="table-light">
         <tr>
-          <th>Method</th>
-          <th>Endpoint</th>
-          <th>Description</th>
+          <th style="width: 10%;">Method</th>
+          <th style="width: 45%;">Endpoint</th>
+          <th style="width: 45%;">Description</th>
         </tr>
       </thead>
       <tbody>
+        <tr><td colspan="3" class="fw-bold text-primary text-center">Public Read-Only Endpoints</td></tr>
         <tr>
           <td>GET</td>
-          <td><code>/api/news/articles/</code></td>
-          <td>List all news articles</td>
+          <td><code class="text-break">/api/news/articles/</code></td>
+          <td>List all published news articles (internal + external)</td>
         </tr>
         <tr>
           <td>GET</td>
-          <td><code>/api/news/articles/&lt;slug&gt;/</code></td>
+          <td><code class="text-break">/api/news/articles/&lt;slug&gt;/</code></td>
           <td>Retrieve a single article by slug</td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td><code class="text-break">/api/news/articles/?search=AI</code></td>
+          <td>Search by keyword</td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td><code class="text-break">/api/news/articles/?category=Cybersecurity</code></td>
+          <td>Filter by category name</td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td><code class="text-break">/api/news/articles/?type=internal</code></td>
+          <td>Only internal articles</td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td><code class="text-break">/api/news/articles/?type=external</code></td>
+          <td>Only external articles</td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td><code class="text-break">/api/news/articles/?ordering=-published_at</code></td>
+          <td>Sort results (e.g. by date or title)</td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td><code class="text-break">/api/news/articles/?page=2</code></td>
+          <td>Paginate results (10 per page)</td>
+        </tr>
+
+        <tr><td colspan="3" class="fw-bold text-success text-center">Internal Article Management (Admins Only)</td></tr>
+        <tr>
+          <td>POST</td>
+          <td><code class="text-break">/api/news/internal-articles/</code></td>
+          <td>Create a new internal article</td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td><code class="text-break">/api/news/internal-articles/&lt;slug&gt;/</code></td>
+          <td>Retrieve a single internal article</td>
+        </tr>
+        <tr>
+          <td>PUT</td>
+          <td><code class="text-break">/api/news/internal-articles/&lt;slug&gt;/</code></td>
+          <td>Replace entire internal article</td>
+        </tr>
+        <tr>
+          <td>PATCH</td>
+          <td><code class="text-break">/api/news/internal-articles/&lt;slug&gt;/</code></td>
+          <td>Partially update internal article</td>
+        </tr>
+        <tr>
+          <td>DELETE</td>
+          <td><code class="text-break">/api/news/internal-articles/&lt;slug&gt;/</code></td>
+          <td>Delete internal article</td>
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <h4 class="mt-4">Example Usage</h4>
+  <div class="border rounded bg-light p-3">
+  <pre class="mb-0"><code>
+  GET /api/news/articles/?search=quantum-computing
+  GET /api/news/internal-articles/future-of-quantum-processors/
+  POST /api/news/internal-articles/
+  {
+      "title": "Future of Quantum Processors in AI",
+      "slug": "future-of-quantum-processors",
+      "summary": "Quantum computing is poised to revolutionize AI by providing unprecedented processing power for complex tasks, such as molecular simulations and cryptography.",
+      "content": "Researchers have been exploring how quantum processors can outperform classical architectures. The integration of AI with quantum systems could lead to breakthroughs in material science and advanced machine learning models...",
+      "published_at": "2025-08-05T12:00:00Z",
+      "category": "Technology",
+      "image_url": "https://example.com/images/quantum-chip.jpg",
+      "source_name": "TechRadar",
+      "source_url": "https://www.techradar.com/articles/future-of-quantum-processors",
+      "author": "Jane Doe"
+  }
+  </code></pre>
   </div>
 
   <p class="mt-3 text-center">

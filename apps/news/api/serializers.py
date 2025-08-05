@@ -12,12 +12,9 @@ class UnifiedArticleSerializer(serializers.Serializer):
     content = serializers.CharField()
     published_at = serializers.DateTimeField()
     category = serializers.StringRelatedField()
-
     image_url = serializers.SerializerMethodField()
-
     source_name = serializers.SerializerMethodField()
     source_url = serializers.SerializerMethodField()
-
     author = serializers.SerializerMethodField()
 
     def get_image_url(self, obj):
@@ -29,9 +26,7 @@ class UnifiedArticleSerializer(serializers.Serializer):
         return None
 
     def get_source_name(self, obj):
-        if isinstance(obj, ExternalArticle):
-            return obj.source_name or ""
-        return "UK Tech Insights"
+        return obj.source_name if isinstance(obj, ExternalArticle) else "UK Tech Insights"
 
     def get_source_url(self, obj):
         if isinstance(obj, ExternalArticle):
@@ -42,6 +37,20 @@ class UnifiedArticleSerializer(serializers.Serializer):
     def get_author(self, obj):
         if isinstance(obj, ExternalArticle):
             return obj.author or ""
-        elif isinstance(obj, InternalArticle):
-            return [user.get_full_name() or user.username for user in obj.authors.all()]
-        return None
+        return [user.get_full_name() or user.username for user in obj.authors.all()]
+    
+
+class InternalArticleSerializer(serializers.ModelSerializer):
+    authors = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=User.objects.all()
+    )
+
+    class Meta:
+        model = InternalArticle
+        fields = [
+            'id', 'title', 'slug', 'summary', 'content',
+            'publication_status', 'cover_image', 'category',
+            'authors', 'published_at'
+        ]
+        read_only_fields = ['id', 'slug']

@@ -7,5 +7,7 @@ from . import views
 app_name = 'api_docs'
 
 urlpatterns = [
-    path('public-api/', views.PublicAPIPageView.as_view(), name="public_api"),
+    path('', views.PublicAPIPageView.as_view(), name="public_api"),
+    path("news/", views.NewsAPIPageView.as_view(), name="news"),
+    path("companies/", views.CompaniesAPIPageView.as_view(), name="companies"),
 ]

@@ -4,23 +4,24 @@
 
 {% block content %}
 <div class="container py-5">
-    <h2 class="mb-4 text-center">Public API Endpoints</h2>
+  <h2 class="mb-4 text-center">Public API Endpoints</h2>
 
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item">
-            <strong>Companies API:</strong>
-            <a href="/api/companies/" target="_blank">/api/companies/</a>
-        </li>
-        <li class="list-group-item">
-            <strong>Job Listings API:</strong>
-            <em>(Coming soon)</em>
-        </li>
-        <li class="list-group-item">
-            <strong>News API:</strong>
-            <a href="/api/news/articles/" target="_blank">/api/news/articles/</a>
-        </li>
-    </ul>
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="list-group">
+        <a href="{% url 'api_docs:news' %}" class="list-group-item list-group-item-action">
+          <strong>News API</strong> – View all news-related endpoints
+        </a>
+        <a href="{% url 'api_docs:companies' %}" class="list-group-item list-group-item-action">
+          <strong>Companies API</strong> – View all company-related endpoints
+        </a>
+        <a class="list-group-item disabled">
+          <strong>Jobs API</strong> – <em>(Coming soon)</em>
+        </a>
+      </div>
 
-    <p class="mt-4 text-muted text-center">More endpoints and API documentation will be added soon.</p>
+      <p class="mt-4 text-muted text-center">More endpoints and full documentation will be added over time.</p>
+    </div>
+  </div>
 </div>
 {% endblock %}

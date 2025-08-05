@@ -28,9 +28,11 @@ urlpatterns = [
     path('learning/', include('apps.learning.urls')),
     path('search/', include('apps.search.urls')),
     path('news/', include('apps.news.urls')),
-    path('api/news/', include('apps.news.api.urls')),
     path('companies/', include('apps.companies.urls')),
     path('locations/', include('apps.locations.urls')),
     path('job_listings/', include('apps.job_listings.urls')),
+    
     path('api/', include('apps.api_docs.urls')),
+    path("api/news/", include("apps.news.api.urls")),
+    path("api/companies/", include("apps.companies.api.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

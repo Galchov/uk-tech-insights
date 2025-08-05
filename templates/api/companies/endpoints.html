@@ -1,5 +1,4 @@
 {% extends 'common/base.html' %}
-
 {% block title %}Companies API{% endblock %}
 
 {% block content %}
@@ -7,27 +6,117 @@
   <h2 class="mb-4 text-center">Companies API Endpoints</h2>
 
   <div class="table-responsive">
-    <table class="table table-bordered table-hover">
+    <table class="table table-bordered table-hover table-sm align-middle">
       <thead class="table-light">
         <tr>
-          <th>Method</th>
-          <th>Endpoint</th>
-          <th>Description</th>
+          <th style="width: 10%;">Method</th>
+          <th style="width: 45%;">Endpoint</th>
+          <th style="width: 45%;">Description</th>
         </tr>
       </thead>
       <tbody>
+        <tr><td colspan="3" class="fw-bold text-primary text-center">Public Read-Only Endpoints</td></tr>
         <tr>
           <td>GET</td>
-          <td><code>/api/companies/</code></td>
-          <td>List all tech companies</td>
+          <td><code class="text-break">/api/companies/</code></td>
+          <td>List all registered tech companies</td>
         </tr>
         <tr>
           <td>GET</td>
-          <td><code>/api/companies/&lt;slug&gt;/</code></td>
+          <td><code class="text-break">/api/companies/&lt;slug&gt;/</code></td>
           <td>Retrieve a single company by slug</td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td><code class="text-break">/api/companies/?search=DeepMind</code></td>
+          <td>Search companies by name or description</td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td><code class="text-break">/api/companies/?location=London</code></td>
+          <td>Filter companies by headquarters city</td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td><code class="text-break">/api/companies/?industry=AI</code></td>
+          <td>Filter by industry name</td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td><code class="text-break">/api/companies/?tech_stack=Python</code></td>
+          <td>Filter by tech stack (technology name)</td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td><code class="text-break">/api/companies/?ordering=name</code></td>
+          <td>Sort results (e.g. by name, foundation date)</td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td><code class="text-break">/api/companies/?page=2</code></td>
+          <td>Paginate results (10 per page)</td>
+        </tr>
+
+        <tr><td colspan="3" class="fw-bold text-success text-center">Company Management (Admins Only)</td></tr>
+        <tr>
+          <td>POST</td>
+          <td><code class="text-break">/api/companies/</code></td>
+          <td>Create a new company</td>
+        </tr>
+        <tr>
+          <td>PUT</td>
+          <td><code class="text-break">/api/companies/&lt;slug&gt;/</code></td>
+          <td>Replace entire company entry</td>
+        </tr>
+        <tr>
+          <td>PATCH</td>
+          <td><code class="text-break">/api/companies/&lt;slug&gt;/</code></td>
+          <td>Partially update company entry</td>
+        </tr>
+        <tr>
+          <td>DELETE</td>
+          <td><code class="text-break">/api/companies/&lt;slug&gt;/</code></td>
+          <td>Delete a company</td>
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <h4 class="mt-4">Example Usage</h4>
+  <div class="border rounded bg-light p-3">
+  <pre class="mb-0"><code>
+  GET /api/companies/?search=deepwave-technologies
+  GET /api/companies/deepwave-technologies/
+  POST /api/companies/
+
+  {
+      "name": "DeepWave Technologies",
+      "slug": "deepwave-technologies",
+      "logo": "http://127.0.0.1:8000/media/company_logo/deepwave-logo.png",
+      "description": "DeepWave Technologies is a UK-based AI research and development company focused on cutting-edge applications in autonomous systems, healthcare diagnostics, and natural language understanding. Founded by former university researchers, DeepWave collaborates with international partners to push the boundaries of machine learning innovation.",
+      "website": "https://www.deepwave.ai",
+      "foundation_date": "2018-09-15",
+      "formatted_foundation_date": "September 2018",
+      "location": "London, United Kingdom",
+      "address": "14 King Street, London, EC2V 8BB",
+      "operating_countries": [
+          "United Kingdom",
+          "Germany",
+          "Singapore"
+      ],
+      "industries": [
+          "Artificial Intelligence",
+          "Healthcare",
+          "Autonomous Systems"
+      ],
+      "tech_stack": [
+          "Python",
+          "TensorFlow",
+          "Docker",
+          "Kubernetes"
+      ]
+  }
+  </code></pre>
   </div>
 
   <p class="mt-3 text-center">

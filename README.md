@@ -76,3 +76,4 @@ dependencies = [
     "djangorestframework (>=3.16.0,<4.0.0)",
     "requests (>=2.32.4,<3.0.0)"
 ]
+```

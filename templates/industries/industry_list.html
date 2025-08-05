@@ -1,0 +1,39 @@
+{% extends 'common/base.html' %}
+
+{% block title %}Industries{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4">Industries</h2>
+
+  <div class="mb-3 text-end">
+    <a href="{% url 'industries:industry_add' %}" class="btn btn-primary">Add Industry</a>
+  </div>
+
+  <table class="table table-bordered">
+    <thead class="table-light">
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th style="width: 150px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for industry in industries %}
+      <tr>
+        <td>{{ industry.name }}</td>
+        <td>{{ industry.description|truncatewords:15 }}</td>
+        <td>
+          <a href="{% url 'industries:industry_edit' industry.pk %}" class="btn btn-outline-secondary btn-sm">Edit</a>
+          <a href="{% url 'industries:industry_delete' industry.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="3">No industries added yet.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

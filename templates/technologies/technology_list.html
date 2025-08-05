@@ -1,0 +1,28 @@
+{% extends 'common/base.html' %}
+
+{% block content %}
+<div class="mx-auto border p-4 mt-4" style="max-width: 700px;">
+    <div class="d-flex justify-content-between mb-3">
+        <a href="{% url 'technologies:technology_add' %}" class="btn btn-primary">Add Technology</a>
+        <a href="{% url 'accounts:dashboard' user.pk %}" class="btn btn-outline-secondary">Back to Dashboard</a>
+    </div>
+
+    {% if technologies %}
+        <ul class="list-group">
+            {% for tech in technologies %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{% url 'technologies:technology_detail' tech.pk %}">
+                    {{ tech.name }}
+                </a>
+                <span>
+                    <a href="{% url 'technologies:technology_edit' tech.pk %}" class="text-primary small me-3">Edit</a>
+                    <a href="{% url 'technologies:technology_delete' tech.pk %}" class="text-danger small">Delete</a>
+                </span>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-center text-muted mt-4">No technologies added yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

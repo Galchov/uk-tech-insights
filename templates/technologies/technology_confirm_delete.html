@@ -1,0 +1,18 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block title %}Technologies{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4 text-center">Delete Technology</h2>
+  
+<div class="alert alert-danger text-center">
+  <p>Are you sure you want to delete <strong>{{ object.name }}</strong>?</p>
+  <form method="post" class="d-inline-block">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Confirm</button>
+    <a href="{% url 'technologies:technology_list' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+
+</div>
+{% endblock %}

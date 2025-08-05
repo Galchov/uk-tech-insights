@@ -1,0 +1,45 @@
+{% extends 'common/base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="mx-auto border p-4 mt-4" style="max-width: 400px;">
+    <h5 class="text-center mb-3">
+        {% if view.object.pk %}Edit{% else %}Add{% endif %} Technology
+    </h5>
+
+    {% if form.non_field_errors %}
+    <div class="text-danger small mb-2">
+        {% for error in form.non_field_errors %}
+            <div>{{ error }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% for field in form %}
+        <div class="mb-3 text-start">
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {{ field|add_class:"form-control" }}
+            {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+            {% endif %}
+            {% for error in field.errors %}
+                <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+        <div class="d-grid mb-2">
+            <button type="submit" class="btn btn-primary">
+                {% if view.object.pk %}Save Changes{% else %}Add Technology{% endif %}
+            </button>
+        </div>
+
+        <div class="text-center">
+            <a href="{% url 'technologies:technology_list' %}" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

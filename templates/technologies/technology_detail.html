@@ -1,0 +1,27 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block title %}Technologies{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4 text-center">{{ technology.name }}</h2>
+  
+<div class="card shadow-sm mx-auto" style="max-width: 600px;">
+  {% if technology.logo %}
+    <img src="{{ technology.logo.url }}" class="card-img-top p-4" style="height: 200px; object-fit: contain;" alt="{{ technology.name }}">
+  {% endif %}
+  <div class="card-body">
+    <h5 class="card-title">{{ technology.name }}</h5>
+    <p class="card-text">{{ technology.description }}</p>
+    {% if technology.website %}
+      <p><a href="{{ technology.website }}" target="_blank">{{ technology.website }}</a></p>
+    {% endif %}
+  </div>
+  <div class="card-footer bg-white">
+    <a href="{% url 'technologies:technology_edit' technology.pk %}" class="btn btn-outline-primary">Edit</a>
+    <a href="{% url 'technologies:technology_delete' technology.pk %}" class="btn btn-outline-danger">Delete</a>
+    <a href="{% url 'technologies:technology_list' %}" class="btn btn-secondary">Back to List</a>
+  </div>
+</div>
+
+</div>
+{% endblock %}

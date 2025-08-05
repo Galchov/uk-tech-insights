@@ -3,16 +3,46 @@
 {% block title %}Jobs | UK Tech Insights{% endblock %}
 
 {% block content %}
-<h1 class="text-center">Job Market</h1>
-<p class="text-center">This is the jobs center, where you can see the current status of the market</p>
-<a href="{% url 'job_listings:add_job' %}">Post Job</a>
-<div>
-    {% for job in jobs %}
-        <div>
-            <a href="{% url 'job_listings:job_detail' job.slug %}">{{ job.title }}</a>
+<div class="container my-5">
+    <h1 class="text-center mb-3">Job Market</h1>
+    <p class="text-center mb-4">This is the jobs center, where you can see the current status of the market</p>
+
+    <div class="text-center mb-4">
+        <a href="{% url 'job_listings:add_job' %}" class="btn btn-primary">Post a Job</a>
+    </div>
+
+    {% if jobs %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for job in jobs %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm border">
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <div>
+                                <h5 class="card-title mb-2">
+                                    <a href="{% url 'job_listings:job_detail' job.slug %}" class="text-decoration-none text-dark">
+                                        {{ job.title }}
+                                    </a>
+                                </h5>
+                                <p class="card-text small mb-1">
+                                    <strong>Company:</strong> {{ job.company.name }}
+                                </p>
+                                <p class="card-text small mb-1">
+                                    <strong>Location:</strong> {{ job.location }}
+                                </p>
+                                <p class="card-text small mb-2">
+                                    <strong>Type:</strong> {{ job.get_job_type_display }}
+                                </p>
+                            </div>
+                            <div class="mt-2 text-end">
+                                <a href="{% url 'job_listings:job_detail' job.slug %}" class="btn btn-outline-secondary btn-sm">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-    {% empty %}
-        <p class="text-center">No jobs.</p>
-    {% endfor %}
+    {% else %}
+        <p class="text-center text-muted">No jobs available at the moment.</p>
+    {% endif %}
 </div>
 {% endblock %}

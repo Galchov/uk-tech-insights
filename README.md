@@ -11,12 +11,7 @@ The platform is developed using Django and Django Rest Framework, and it is modu
 - [Overview](#overview)
 - [Apps and Modules](#apps-and-modules)
 - [Technology Stack](#technology-stack)
-- [Getting Started](#getting-started)
-  - [Installation](#installation)
-  - [Environment Configuration](#environment-configuration)
-  - [Database Setup](#database-setup)
-  - [Running the Project](#running-the-project)
-- [Documentation](#documentation)
+- [Getting Started](docs/index.md)
 - [Contributing](#contributing)
 - [License](#license)
 

@@ -30,7 +30,7 @@ urlpatterns = [
     path('news/', include('apps.news.urls')),
     path('api/news/', include('apps.news.api.urls')),
     path('companies/', include('apps.companies.urls')),
-    path('api/', include('apps.companies.api.urls')),
     path('locations/', include('apps.locations.urls')),
     path('job_listings/', include('apps.job_listings.urls')),
+    path('api/', include('apps.api_docs.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'apps.companies',
     'apps.locations',
     'apps.job_listings',
+    'apps.api_docs',
 
     # Additional apps
     'django_countries',

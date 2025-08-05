@@ -60,7 +60,7 @@ class Company(models.Model):
         blank=True,
     )
     industries = models.ManyToManyField(
-        to='Industry',
+        to='industries.Industry',
         related_name='companies',
         verbose_name=_('Industry'),
         help_text=_("Company can cover multiple areas of operation."),
@@ -106,23 +106,3 @@ class Company(models.Model):
         if self.foundation_date:
             return self.foundation_date.strftime("%B %Y")
         return "Not available"
-
-
-class Industry(models.Model):
-    name = models.CharField(
-        max_length=100,
-        unique=True,
-        verbose_name=_('Industry name'),
-    )
-    description = models.TextField(
-        blank=True,
-        verbose_name=_('Description'),
-    )
-
-    class Meta:
-        verbose_name = "Industry"
-        verbose_name_plural = "Industries"
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name

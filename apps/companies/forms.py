@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Company, Industry
+from .models import Company
 
 
 class CompanyForm(forms.ModelForm):
@@ -18,9 +18,3 @@ class CompanyForm(forms.ModelForm):
             'industries',
             'tech_stack',
         ]
-
-
-class IndustryForm(forms.ModelForm):
-    class Meta:
-        model = Industry
-        fields = "__all__"

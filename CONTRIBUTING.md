@@ -145,3 +145,7 @@ fix(companies): resolve missing industry filter bug
 - Keep templates consistent with other domain apps (News, Companies, Job Market)
 
 - Use the common app for shared components (navbar, footer, buttons)
+
+## License
+
+By contributing, you agree that your work will be licensed under the [MIT License](LICENSE).

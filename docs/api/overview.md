@@ -115,9 +115,9 @@ All list endpoints are paginated by default.
 
 Default parameters:
 
-- page – Current page number
+- `page` – Current page number
 
-- page_size – Items per page (default: 10)
+- `page_size` – Items per page (default: 10)
 
 Example:
 
@@ -139,17 +139,18 @@ GET /api/jobs/?location=London&language=Python
 
 ## Error Handling
 
-Error responses use standard HTTP status codes.
+Error responses follow standard HTTP status codes:
 
-Status Code	Meaning
-- 200 OK Successful request
-- 201 Created Resource created successfully
-- 204 No Content Successful deletion
-- 400 Bad Request Validation or formatting error
-- 401 Unauthorized Authentication required
-- 403 Forbidden	Insufficient permissions
-- 404 Not Found	Resource not found
-- 500 Internal Server Error	Unexpected server issue
+| **Status Code** | **Meaning** |
+|-----------------|-------------|
+| `200 OK`        | Successful request. |
+| `201 Created`   | Resource created successfully. |
+| `204 No Content`| Successful deletion. |
+| `400 Bad Request` | Validation or formatting error. |
+| `401 Unauthorized` | Authentication required. |
+| `403 Forbidden` | Insufficient permissions. |
+| `404 Not Found` | Resource not found. |
+| `500 Internal Server Error` | Unexpected server issue. |
 
 Example error response:
 
